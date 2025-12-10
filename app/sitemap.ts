@@ -11,12 +11,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/about',
   ];
 
-  const staticPages = routes.map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: (route === '' ? 'daily' : route.includes('collection') ? 'weekly' : 'monthly') as const,
-    priority: route === '' ? 1 : route.includes('collection') ? 0.8 : 0.6,
-  }));
+  const staticPages = routes.map((route) => {
+    let changeFrequency: 'daily' | 'weekly' | 'monthly' = 'monthly';
+    if (route === '') {
+      changeFrequency = 'daily';
+    } else if (route.includes('collection')) {
+      changeFrequency = 'weekly';
+    }
+    
+    return {
+      url: `${baseUrl}${route}`,
+      lastModified: new Date(),
+      changeFrequency,
+      priority: route === '' ? 1 : route.includes('collection') ? 0.8 : 0.6,
+    };
+  });
 
   // Add product pages dynamically (when products are available)
   // This would be populated with actual product IDs from your database
