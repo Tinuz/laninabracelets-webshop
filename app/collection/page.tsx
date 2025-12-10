@@ -1,4 +1,4 @@
-import { Collection } from '@/src/page-components/Collection';
+import { CollectionWrapper } from '@/src/components/CollectionWrapper';
 import { getProducts } from '@/src/lib/products';
 import type { Metadata } from "next";
 
@@ -61,6 +61,6 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 export default async function CollectionPage() {
   const products = await getProducts();
   
-  return <Collection products={products} />;
+  return <CollectionWrapper products={products} />;
 }
 
