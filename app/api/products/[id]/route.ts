@@ -6,11 +6,10 @@ export const revalidate = 3600; // Revalidate every hour
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
-    const product = await getProductById(id);
+    const product = await getProductById(params.id);
     
     if (!product) {
       return NextResponse.json(
