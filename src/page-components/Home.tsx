@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, Star, Heart } from 'lucide-react';
+import { ArrowRight, Star, Heart, Layers, Instagram } from 'lucide-react';
 import Link from 'next/link';
 import { Product } from '../lib/data';
 import { ProductCard } from '../components-next/ProductCard';
@@ -215,15 +215,93 @@ export function Home({ products = [] }: HomeProps) {
         </div>
       </section>
 
+      {/* Styling Tips Section */}
+      <section className="py-32 bg-white">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="text-center mb-20">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="font-serif text-4xl md:text-5xl text-stone-900 tracking-tight mb-4"
+            >
+              Styling Tips
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-stone-600 font-light text-lg"
+            >
+              Hoe draag je onze sieraden?
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+            {[
+              {
+                icon: Layers,
+                title: 'Layering',
+                description: 'Combineer meerdere armbanden voor een trendy look. Mix verschillende diktes en kleuren voor extra effect.',
+              },
+              {
+                icon: Star,
+                title: 'Mix & Match',
+                description: 'Combineer goud met zilver voor een moderne twist. Durf te experimenteren met verschillende stijlen.',
+              },
+              {
+                icon: Heart,
+                title: 'Persoonlijk Touch',
+                description: 'Voeg een armband met initialen toe voor een persoonlijke betekenis. Perfect voor speciale momenten.',
+              },
+            ].map((tip, index) => (
+              <motion.div
+                key={tip.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+                className="text-center group"
+              >
+                <div className="w-20 h-20 mx-auto mb-6 bg-stone-100 flex items-center justify-center group-hover:bg-stone-200 transition-colors duration-300">
+                  <tip.icon className="w-8 h-8 text-stone-500 group-hover:text-stone-700 transition-colors duration-300" />
+                </div>
+                <h3 className="font-serif text-2xl text-stone-900 mb-4 tracking-tight">
+                  {tip.title}
+                </h3>
+                <p className="text-stone-600 font-light leading-relaxed max-w-xs mx-auto">
+                  {tip.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6 }}
+            className="text-center mt-16"
+          >
+            <Link href="/collection">
+              <Button variant="secondary" className="px-8 py-4 uppercase tracking-widest">
+                Ontdek Onze Collectie
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Instagram Section */}
       <section className="py-32 bg-white relative overflow-hidden">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="font-serif text-4xl md:text-5xl text-stone-900 mb-4">
-              Volg Ons Verhaal
+            #LaNinaBracelets
             </h2>
             <p className="text-stone-600 font-light">
-              @laninabracelets
+            Styled by you! Tag ons op Instagram
             </p>
           </div>
           

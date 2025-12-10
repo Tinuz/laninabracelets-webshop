@@ -71,7 +71,7 @@ export function Navbar() {
             />
           </div>
           <span className="font-serif text-base sm:text-lg lg:text-2xl text-stone-900 tracking-wide truncate">
-            La Nina
+            La Nina Bracelets
           </span>
         </Link>
 

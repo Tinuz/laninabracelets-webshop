@@ -11,11 +11,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
           <div className="space-y-6">
             <span className="font-serif text-3xl text-white">
-              La Nina
+              La Nina Bracelets
             </span>
             <p className="text-stone-400 text-sm font-light leading-relaxed max-w-xs">
               Handgemaakte armbanden, kettingen & oorbellen. 
-              Waterdicht & gemaakt met liefde.
+              Gemaakt met passie en liefde.
             </p>
             <div className="flex gap-4">
               <a href="https://instagram.com/laninabracelets" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 flex items-center justify-center hover:bg-white hover:text-stone-900 transition-all text-white">
