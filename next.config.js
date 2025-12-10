@@ -120,9 +120,6 @@ const nextConfig = {
   // Enable strict mode for better performance
   reactStrictMode: true,
 
-  // Enable SWC minification for better performance
-  swcMinify: true,
-
   // Remove console logs in production
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
