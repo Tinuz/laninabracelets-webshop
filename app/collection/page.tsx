@@ -2,8 +2,8 @@ import { Collection } from '@/src/page-components/Collection';
 import { getProducts } from '@/src/lib/products';
 import type { Metadata } from "next";
 
-export async function generateMetadata({ searchParams }: { searchParams: { filter?: string } }): Promise<Metadata> {
-  const { filter } = searchParams;
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ filter?: string }> }): Promise<Metadata> {
+  const { filter } = await searchParams;
   
   if (filter === 'new') {
     return {
