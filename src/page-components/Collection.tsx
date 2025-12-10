@@ -107,7 +107,95 @@ export function Collection({ products = [] }: CollectionProps) {
       </div>
 
       <div className="container mx-auto px-6 md:px-12 max-w-7xl">
-        <div className="flex gap-12">
+        {/* Mobile Filters */}
+        <div className="lg:hidden w-full mb-8">
+          <button 
+            className="flex items-center justify-between w-full py-4 border-b border-stone-300 text-stone-900 font-regular"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+          >
+            <span className="uppercase tracking-widest text-xs font-bold">Filters & Sorteer</span>
+            <Filter size={18} className={isFilterOpen ? 'rotate-180' : ''} />
+          </button>
+          
+          {isFilterOpen && (
+            <div className="py-6 space-y-6 border-b border-stone-200 bg-stone-50 -mx-6 px-6">
+              <div>
+                <h3 className="font-sans font-bold text-xs uppercase tracking-widest text-stone-900 mb-4">
+                  Filter
+                </h3>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <button
+                    onClick={() => {
+                      setShowNewOnly(!showNewOnly);
+                      if (showBestsellersOnly) setShowBestsellersOnly(false);
+                    }}
+                    className={`
+                      px-4 py-2 text-xs uppercase tracking-widest transition-all font-bold rounded-none
+                      ${showNewOnly 
+                        ? 'bg-stone-900 text-white' 
+                        : 'border border-stone-400 text-stone-900 hover:bg-stone-900 hover:text-white'}
+                    `}
+                  >
+                    Nieuw Binnen
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowBestsellersOnly(!showBestsellersOnly);
+                      if (showNewOnly) setShowNewOnly(false);
+                    }}
+                    className={`
+                      px-4 py-2 text-xs uppercase tracking-widest transition-all font-bold rounded-none
+                      ${showBestsellersOnly 
+                        ? 'bg-stone-900 text-white' 
+                        : 'border border-stone-400 text-stone-900 hover:bg-stone-900 hover:text-white'}
+                    `}
+                  >
+                    Bestsellers
+                  </button>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-sans font-bold text-xs uppercase tracking-widest text-stone-900 mb-4">
+                  Categorieën
+                </h3>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {categories.map(c => (
+                    <button
+                      key={c.value}
+                      onClick={() => setCategory(c.value)}
+                      className={`
+                        px-4 py-2 text-xs uppercase tracking-widest transition-all font-bold rounded-none
+                        ${category === c.value 
+                          ? 'bg-stone-900 text-white' 
+                          : 'border border-stone-400 text-stone-900 hover:bg-stone-900 hover:text-white'}
+                      `}
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-sans font-bold text-xs uppercase tracking-widest text-stone-900 mb-4">
+                  Sorteer
+                </h3>
+                <select 
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortOption)}
+                  className="w-full bg-white border border-stone-300 text-stone-900 font-light py-3 px-4 focus:outline-none focus:border-stone-900 transition-colors rounded-none"
+                >
+                  <option value="newest">Nieuwste</option>
+                  <option value="price-asc">Prijs: Laag naar Hoog</option>
+                  <option value="price-desc">Prijs: Hoog naar Laag</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-0 lg:gap-12">
           {/* Sidebar Filters - Desktop */}
           <div className="hidden lg:block w-64 flex-shrink-0 sticky top-32 h-fit">
             <div className="space-y-8">
@@ -194,85 +282,12 @@ export function Collection({ products = [] }: CollectionProps) {
             </div>
           </div>
 
-          {/* Mobile Filters */}
-          <div className="lg:hidden w-full mb-8">
-            <button 
-              className="flex items-center justify-between w-full py-4 border-b border-stone-300 text-stone-900 font-regular"
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-            >
-              <span className="uppercase tracking-widest text-xs font-bold">Filters</span>
-              <Filter size={18} />
-            </button>
-            
-            {isFilterOpen && (
-              <div className="py-6 space-y-6 border-b border-stone-200">
-                <div>
-                  <h3 className="font-sans font-bold text-xs uppercase tracking-widest text-stone-900 mb-4">
-                    Filter
-                  </h3>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <button
-                      onClick={() => {
-                        setShowNewOnly(!showNewOnly);
-                        if (showBestsellersOnly) setShowBestsellersOnly(false);
-                      }}
-                      className={`
-                        px-6 py-2 text-xs uppercase tracking-widest transition-all font-bold
-                        ${showNewOnly 
-                          ? 'bg-stone-900 text-white' 
-                          : 'border border-stone-400 text-stone-900 hover:bg-stone-900 hover:text-white'}
-                      `}
-                    >
-                      Nieuw Binnen
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowBestsellersOnly(!showBestsellersOnly);
-                        if (showNewOnly) setShowNewOnly(false);
-                      }}
-                      className={`
-                        px-6 py-2 text-xs uppercase tracking-widest transition-all font-bold
-                        ${showBestsellersOnly 
-                          ? 'bg-stone-900 text-white' 
-                          : 'border border-stone-400 text-stone-900 hover:bg-stone-900 hover:text-white'}
-                      `}
-                    >
-                      Bestsellers
-                    </button>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="font-sans font-bold text-xs uppercase tracking-widest text-stone-900 mb-4">
-                    Categorieën
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {categories.map(c => (
-                      <button
-                        key={c.value}
-                        onClick={() => setCategory(c.value)}
-                        className={`
-                          px-6 py-2 text-xs uppercase tracking-widest transition-all font-bold
-                          ${category === c.value 
-                            ? 'bg-stone-900 text-white' 
-                            : 'border border-stone-400 text-stone-900 hover:bg-stone-900 hover:text-white'}
-                        `}
-                      >
-                        {c.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* Main Content Area */}
-          <div className="flex-1">
+          <div className="w-full lg:flex-1">
             {/* Product Grid */}
             <motion.div 
               layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12 pb-24"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-8 lg:gap-y-12 pb-24"
             >
               <AnimatePresence>
                 {filteredProducts.map(product => (
