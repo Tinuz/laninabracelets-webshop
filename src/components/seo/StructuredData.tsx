@@ -80,8 +80,6 @@ interface ProductSchemaProps {
     name: string;
     description: string;
     image: string[];
-    price: number;
-    currency: string;
     availability: 'InStock' | 'OutOfStock' | 'PreOrder';
     category: string;
     brand: string;
@@ -108,36 +106,12 @@ export function ProductSchema({ product }: ProductSchemaProps) {
     ...(product.sku && { "sku": product.sku }),
     "offers": {
       "@type": "Offer",
-      "price": product.price,
-      "priceCurrency": product.currency,
       "availability": `https://schema.org/${product.availability}`,
       "seller": {
         "@type": "Organization",
         "name": "La Nina Bracelets"
       },
-      "shippingDetails": {
-        "@type": "OfferShippingDetails",
-        "shippingRate": {
-          "@type": "MonetaryAmount",
-          "value": "0",
-          "currency": "EUR"
-        },
-        "deliveryTime": {
-          "@type": "ShippingDeliveryTime",
-          "handlingTime": {
-            "@type": "QuantitativeValue",
-            "minValue": 1,
-            "maxValue": 3,
-            "unitCode": "DAY"
-          },
-          "transitTime": {
-            "@type": "QuantitativeValue", 
-            "minValue": 2,
-            "maxValue": 5,
-            "unitCode": "DAY"
-          }
-        }
-      }
+      "url": "https://www.etsy.com/shop/LaNinaBracelets"
     },
     ...(product.aggregateRating && {
       "aggregateRating": {

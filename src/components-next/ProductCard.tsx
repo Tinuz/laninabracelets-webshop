@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Product } from '../lib/data';
-import { formatPrice } from '../lib/utils';
 import { ExternalLink } from 'lucide-react';
 
 interface ProductCardProps {
@@ -55,8 +54,8 @@ export function ProductCard({ product }: ProductCardProps) {
           <Link href={`/product/${product.id}`}>{product.name}</Link>
         </h3>
         <div className="flex items-center justify-between">
-          <p className="text-stone-600 font-light text-base">
-            {product.currency ? `${product.currency} ` : '€'}{formatPrice(product.price)}
+          <p className="text-stone-600 font-light text-sm">
+            Betaalbare elegantie
           </p>
           <span className="text-[10px] bg-orange-100 text-orange-800 px-2 py-1 font-bold uppercase tracking-wide">
             Etsy

@@ -5,11 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Product } from '../lib/data';
-import { formatPrice } from '../lib/utils';
 import { Button } from '../components/ui/Button';
 import { EtsyButton, EtsyBadge } from '../components/ui/EtsyButton';
 import { ProductCard } from '../components-next/ProductCard';
-import { ArrowLeft, Truck, Shield, RefreshCw } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ProductDetailProps {
@@ -74,9 +73,8 @@ export function ProductDetail({ product, relatedProducts = [] }: ProductDetailPr
               {product.etsyUrl && <EtsyBadge />}
             </div>
             <h1 className="font-serif text-4xl md:text-5xl mb-4 text-[#4a044e]">{product.name}</h1>
-            <p className="text-3xl font-light mb-8 text-primary">
-              {product.currency ? `${product.currency} ` : ''}
-              {formatPrice(product.price)}
+            <p className="text-lg font-light mb-8 text-stone-600">
+              Handgemaakt • Betaalbaar • Uniek
             </p>
 
             <div className="prose prose-sm text-purple-900/70 mb-8 max-w-md">
@@ -136,7 +134,7 @@ export function ProductDetail({ product, relatedProducts = [] }: ProductDetailPr
                     className="inline-block"
                   >
                     <Button size="lg" className="w-full h-14 text-lg bg-stone-900 hover:bg-stone-700 text-white uppercase tracking-widest">
-                      Bekijk op Etsy Shop - {formatPrice(product.price)}
+                      Bekijk op Etsy Shop
                     </Button>
                   </a>
                   <p className="text-center text-xs text-stone-500 font-light">
@@ -146,25 +144,15 @@ export function ProductDetail({ product, relatedProducts = [] }: ProductDetailPr
               )}
             </div>
 
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-4 mt-12 pt-12 border-t border-purple-100">
-              <div className="flex flex-col items-center text-center gap-2 group">
-                <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                  <Truck size={20} />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wide text-purple-900/70">Gratis Verzending</span>
-              </div>
-              <div className="flex flex-col items-center text-center gap-2 group">
-                <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                  <Shield size={20} />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wide text-purple-900/70">2 Jaar Garantie</span>
-              </div>
-              <div className="flex flex-col items-center text-center gap-2 group">
-                <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                  <RefreshCw size={20} />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wide text-purple-900/70">30 Dagen Retour</span>
+            {/* Etsy Benefits */}
+            <div className="mt-12 pt-12 border-t border-stone-200">
+              <div className="text-center space-y-3">
+                <p className="text-sm font-light text-stone-600">
+                  Handgemaakt met zorg • Betaalbare elegantie • Unieke stukken
+                </p>
+                <p className="text-xs text-stone-500">
+                  Verzending en retourbeleid via Etsy
+                </p>
               </div>
             </div>
           </div>
