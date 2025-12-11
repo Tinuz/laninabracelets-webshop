@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Lato } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "@/src/lib/cart-context";
 import { Navbar } from "@/src/components-next/Navbar";
 import { Footer } from "@/src/components-next/Footer";
-import { CartDrawer } from "@/src/components/CartDrawer";
 import { OrganizationSchema, WebsiteSchema } from "@/src/components/seo/StructuredData";
 import { GoogleAnalytics } from "@/src/components/analytics/GoogleAnalytics";
 
@@ -136,14 +134,11 @@ export default function RootLayout({
             queryInput: "required name=search_term"
           }}
         />
-        <CartProvider>
-          <Navbar />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
-          <CartDrawer />
-        </CartProvider>
+        <Navbar />
+        <main className="min-h-screen">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

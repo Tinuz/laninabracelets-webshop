@@ -5,15 +5,13 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Product } from '../lib/data';
 import { formatPrice } from '../lib/utils';
-import { useCart } from '../lib/cart-context';
-import { Plus, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = useCart();
 
   return (
     <motion.div 
@@ -40,7 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
         />
         <div className="absolute inset-0 bg-stone-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
-        {product.etsyUrl ? (
+        {product.etsyUrl && (
           <a
             href={product.etsyUrl}
             target="_blank"
@@ -51,16 +49,6 @@ export function ProductCard({ product }: ProductCardProps) {
             <span className="hidden sm:inline">Etsy</span>
             <ExternalLink size={14} />
           </a>
-        ) : (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              addItem(product);
-            }}
-            className="absolute bottom-4 right-4 bg-white text-stone-900 w-10 h-10 flex items-center justify-center translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hover:bg-stone-900 hover:text-white shadow-lg"
-          >
-            <Plus size={18} />
-          </button>
         )}
       </Link>
       

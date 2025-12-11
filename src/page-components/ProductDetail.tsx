@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Product } from '../lib/data';
-import { useCart } from '../lib/cart-context';
 import { formatPrice } from '../lib/utils';
 import { Button } from '../components/ui/Button';
 import { EtsyButton, EtsyBadge } from '../components/ui/EtsyButton';
@@ -19,7 +18,6 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ product, relatedProducts = [] }: ProductDetailProps) {
-  const { addItem, openCart } = useCart();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   if (!product) {
@@ -130,21 +128,16 @@ export function ProductDetail({ product, relatedProducts = [] }: ProductDetailPr
                   )}
                 </>
               ) : (
-                <>
-                  <Button 
-                    size="lg" 
-                    className="w-full h-14 text-lg shadow-xl shadow-purple-900/10"
-                    onClick={() => {
-                      addItem(product);
-                      openCart();
-                    }}
-                  >
-                    Toevoegen aan Winkelwagen - {formatPrice(product.price)}
-                  </Button>
-                  <p className="text-center text-xs text-purple-900/50 flex items-center justify-center gap-1">
-                    <Truck size={12} className="text-secondary" /> Gratis verzending vanaf €50
+                <div className="text-center">
+                  <p className="text-stone-600 font-light mb-4">
+                    Dit product is momenteel alleen beschikbaar in onze fysieke winkel.
                   </p>
-                </>
+                  <Link href="/collection">
+                    <Button size="lg" variant="secondary">
+                      Bekijk Andere Producten
+                    </Button>
+                  </Link>
+                </div>
               )}
             </div>
 

@@ -4,13 +4,11 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, Menu, X } from 'lucide-react';
-import { useCart } from '../lib/cart-context';
+import { Menu, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 
 export function Navbar() {
-  const { openCart, count } = useCart();
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const { scrollY } = useScroll();
@@ -76,17 +74,7 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center">
-          <button 
-            onClick={openCart}
-            className="p-2 hover:opacity-70 transition-opacity relative text-stone-900"
-          >
-            <ShoppingBag size={20} />
-            {count > 0 && (
-              <span className="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-semibold border-2 border-white shadow-sm">
-                {count}
-              </span>
-            )}
-          </button>
+          {/* Cart removed - all purchases via Etsy */}
         </div>
       </div>
       
@@ -159,16 +147,13 @@ export function Navbar() {
                 
                 {/* Footer */}
                 <div className="p-6 border-t border-stone-200">
-                  <button
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      openCart();
-                    }}
+                  <Link
+                    href="/collection"
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="w-full flex items-center justify-center gap-3 py-4 bg-stone-900 text-white font-bold uppercase tracking-widest text-sm transition-colors hover:bg-stone-700"
                   >
-                    <ShoppingBag size={18} />
-                    Winkelwagen ({count})
-                  </button>
+                    Shop Nu
+                  </Link>
                 </div>
               </div>
             </motion.div>
