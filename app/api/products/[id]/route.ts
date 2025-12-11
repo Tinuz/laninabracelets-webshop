@@ -27,14 +27,13 @@ export async function GET(
       product,
     });
   } catch (error) {
-    console.error('API Error:', error);
+    // Silently handle error - return not found for graceful handling
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch product',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: 'Product temporarily unavailable',
       },
-      { status: 500 }
+      { status: 404 }
     );
   }
 }

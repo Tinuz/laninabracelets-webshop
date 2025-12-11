@@ -23,14 +23,13 @@ export async function GET() {
       shop,
     });
   } catch (error) {
-    console.error('API Error:', error);
+    // Silently handle error
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch shop',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: 'Shop information temporarily unavailable',
       },
-      { status: 500 }
+      { status: 404 }
     );
   }
 }

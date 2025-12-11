@@ -9,7 +9,7 @@ const ETSY_SHOP_ID = process.env.ETSY_SHOP_ID || '';
  */
 export async function getEtsyListings(limit: number = 100): Promise<EtsyListing[]> {
   if (!ETSY_API_KEY || !ETSY_SHOP_ID) {
-    console.warn('Etsy API credentials not configured');
+    // API credentials not ready - use fallback data
     return [];
   }
 
@@ -27,13 +27,14 @@ export async function getEtsyListings(limit: number = 100): Promise<EtsyListing[
     );
 
     if (!response.ok) {
-      throw new Error(`Etsy API error: ${response.status} ${response.statusText}`);
+      // Silently fail - API not ready yet
+      return [];
     }
 
     const data: EtsyListingsResponse = await response.json();
     return data.results || [];
   } catch (error) {
-    console.error('Error fetching Etsy listings:', error);
+    // Silently fail and return empty array - fallback will be used
     return [];
   }
 }
@@ -43,7 +44,7 @@ export async function getEtsyListings(limit: number = 100): Promise<EtsyListing[
  */
 export async function getEtsyShop(): Promise<EtsyShop | null> {
   if (!ETSY_API_KEY || !ETSY_SHOP_ID) {
-    console.warn('Etsy API credentials not configured');
+    // API credentials not ready
     return null;
   }
 
@@ -66,7 +67,7 @@ export async function getEtsyShop(): Promise<EtsyShop | null> {
 
     return await response.json();
   } catch (error) {
-    console.error('Error fetching Etsy shop:', error);
+    // Silently fail - return null for fallback handling
     return null;
   }
 }

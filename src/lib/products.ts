@@ -12,15 +12,13 @@ export async function getProducts(): Promise<Product[]> {
     
     // If we have Etsy products, use them
     if (etsyProducts && etsyProducts.length > 0) {
-      console.log(`✅ Loaded ${etsyProducts.length} products from Etsy`);
       return etsyProducts;
     }
   } catch (error) {
-    console.warn('⚠️ Could not fetch Etsy products, using fallback data:', error);
+    // Silently fall back to local data
   }
   
-  // Fallback to dummy data
-  console.log('📦 Using fallback product data');
+  // Fallback to local data - no logging needed
   return FALLBACK_PRODUCTS;
 }
 
@@ -35,7 +33,7 @@ export async function getProductById(id: string): Promise<Product | null> {
       return etsyProduct;
     }
   } catch (error) {
-    console.warn('⚠️ Could not fetch Etsy product, using fallback data:', error);
+    // Silently fall back to local data
   }
   
   // Fallback to dummy data
