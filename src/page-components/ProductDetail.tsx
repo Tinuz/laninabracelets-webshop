@@ -128,15 +128,20 @@ export function ProductDetail({ product, relatedProducts = [] }: ProductDetailPr
                   )}
                 </>
               ) : (
-                <div className="text-center">
-                  <p className="text-stone-600 font-light mb-4">
-                    Dit product is momenteel alleen beschikbaar in onze fysieke winkel.
-                  </p>
-                  <Link href="/collection">
-                    <Button size="lg" variant="secondary">
-                      Bekijk Andere Producten
+                <div className="text-center space-y-4">
+                  <a
+                    href="https://www.etsy.com/shop/LaNinaBracelets"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block"
+                  >
+                    <Button size="lg" className="w-full h-14 text-lg bg-stone-900 hover:bg-stone-700 text-white uppercase tracking-widest">
+                      Bekijk op Etsy Shop - {formatPrice(product.price)}
                     </Button>
-                  </Link>
+                  </a>
+                  <p className="text-center text-xs text-stone-500 font-light">
+                    Veilig betalen via Etsy • Wereldwijde verzending • Buyer Protection
+                  </p>
                 </div>
               )}
             </div>

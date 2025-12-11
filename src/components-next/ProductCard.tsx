@@ -38,18 +38,16 @@ export function ProductCard({ product }: ProductCardProps) {
         />
         <div className="absolute inset-0 bg-stone-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
-        {product.etsyUrl && (
-          <a
-            href={product.etsyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="absolute bottom-4 right-4 bg-stone-900 text-white px-3 py-2 flex items-center gap-2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hover:bg-stone-700 shadow-lg text-xs font-bold uppercase tracking-widest"
-          >
-            <span className="hidden sm:inline">Etsy</span>
-            <ExternalLink size={14} />
-          </a>
-        )}
+        <a
+          href={product.etsyUrl || "https://www.etsy.com/shop/LaNinaBracelets"}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="absolute bottom-4 right-4 bg-stone-900 text-white px-3 py-2 flex items-center gap-2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hover:bg-stone-700 shadow-lg text-xs font-bold uppercase tracking-widest"
+        >
+          <span className="hidden sm:inline">Etsy</span>
+          <ExternalLink size={14} />
+        </a>
       </Link>
       
       <div className="space-y-2">
@@ -58,13 +56,11 @@ export function ProductCard({ product }: ProductCardProps) {
         </h3>
         <div className="flex items-center justify-between">
           <p className="text-stone-600 font-light text-base">
-            €{formatPrice(product.price)}
+            {product.currency ? `${product.currency} ` : '€'}{formatPrice(product.price)}
           </p>
-          {product.etsyUrl && (
-            <span className="text-[10px] bg-orange-100 text-orange-800 px-2 py-1 font-bold uppercase tracking-wide">
-              Etsy
-            </span>
-          )}
+          <span className="text-[10px] bg-orange-100 text-orange-800 px-2 py-1 font-bold uppercase tracking-wide">
+            Etsy
+          </span>
         </div>
       </div>
     </motion.div>

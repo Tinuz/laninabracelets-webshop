@@ -40,6 +40,7 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1599643478518-17488fbbcd75?q=80&w=1000&auto=format&fit=crop',
     description: 'Delicate crescent moon pendant suspended on a whisper-thin gold chain.',
     isNew: true,
+    etsyUrl: 'https://www.etsy.com/shop/LaNinaBracelets',
   },
   {
     id: '3',
@@ -49,6 +50,7 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop',
     description: 'Freshwater pearls paired with geometric gold studs for a modern twist on a classic.',
     isBestseller: true,
+    etsyUrl: 'https://www.etsy.com/shop/LaNinaBracelets',
   },
   {
     id: '4',
@@ -57,6 +59,7 @@ export const PRODUCTS: Product[] = [
     category: 'bracelets',
     image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=1000&auto=format&fit=crop',
     description: 'Interwoven gold strands creating a fluid, flexible bracelet that moves with you.',
+    etsyUrl: 'https://www.etsy.com/shop/LaNinaBracelets',
   },
   {
     id: '5',
@@ -66,6 +69,7 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1611652022419-a9419f74343a?q=80&w=1000&auto=format&fit=crop',
     description: 'Handgemaakte armband met natuurlijke obsidiaan kralen. Stijlvol en elegant.',
     isBestseller: true,
+    etsyUrl: 'https://www.etsy.com/shop/LaNinaBracelets',
   },
   {
     id: '6',
@@ -75,6 +79,7 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop',
     description: 'A waterfall of small diamonds creating a shimmering effect on the neckline.',
     isNew: true,
+    etsyUrl: 'https://www.etsy.com/shop/LaNinaBracelets',
   },
   {
     id: '7',
@@ -84,6 +89,7 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1630019852942-e5e12f9519d9?q=80&w=1000&auto=format&fit=crop',
     description: 'Angular hoops that catch the light, perfect for everyday statements.',
     isBestseller: true,
+    etsyUrl: 'https://www.etsy.com/shop/LaNinaBracelets',
   },
   {
     id: '8',
@@ -92,5 +98,6 @@ export const PRODUCTS: Product[] = [
     category: 'bracelets',
     image: 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?q=80&w=1000&auto=format&fit=crop',
     description: 'Elegante armband met blauwe edelstenen en zilver. Perfect voor elke gelegenheid.',
+    etsyUrl: 'https://www.etsy.com/shop/LaNinaBracelets',
   }
 ];
