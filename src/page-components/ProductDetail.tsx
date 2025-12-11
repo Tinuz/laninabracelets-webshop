@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Product } from '../lib/data';
 import { Button } from '../components/ui/Button';
-import { EtsyButton, EtsyBadge } from '../components/ui/EtsyButton';
+import { EtsyButton } from '../components/ui/EtsyButton';
 import { ProductCard } from '../components-next/ProductCard';
 import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -70,7 +70,6 @@ export function ProductDetail({ product, relatedProducts = [] }: ProductDetailPr
               {product.isNew && (
                 <span className="inline-block w-fit bg-gradient-to-r from-primary to-secondary text-white text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-md">Nieuw Binnen</span>
               )}
-              {product.etsyUrl && <EtsyBadge />}
             </div>
             <h1 className="font-serif text-4xl md:text-5xl mb-4 text-[#4a044e]">{product.name}</h1>
             <p className="text-lg font-light mb-8 text-stone-600">
