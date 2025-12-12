@@ -45,7 +45,7 @@ export function InstagramSection() {
 
   return (
     <>
-      <section className="py-32 bg-gradient-to-b from-stone-50/40 to-white relative overflow-hidden">
+      <section className="py-32 bg-stone-50 relative overflow-hidden">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <motion.h2 

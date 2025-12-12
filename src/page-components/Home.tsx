@@ -217,7 +217,7 @@ export function Home({ products = [] }: HomeProps) {
       </section>
 
       {/* Styling Tips Section */}
-      <section className="py-32 bg-gradient-to-b from-white to-stone-50/30">
+      <section className="py-32 bg-white">
         <div className="container mx-auto px-6 md:px-12">
           <div className="text-center mb-20">
             <motion.h2 
@@ -294,8 +294,10 @@ export function Home({ products = [] }: HomeProps) {
         </div>
       </section>
 
-      {/* Subtle Divider */}
-      <div className="w-full h-px bg-gradient-to-r from-transparent via-stone-200/50 to-transparent"></div>
+      {/* Section Divider */}
+      <div className="w-full h-8 bg-gradient-to-b from-white via-stone-100/50 to-stone-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-stone-300/30 to-transparent h-px top-1/2 transform -translate-y-1/2"></div>
+      </div>
 
       {/* Instagram Section */}
       <InstagramSection />
