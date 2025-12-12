@@ -1,80 +1,98 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Instagram, ExternalLink } from 'lucide-react';
 import { Button } from './ui/Button';
-import Script from 'next/script';
 
 export function InstagramSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scriptLoadedRef = useRef(false);
+
+  useEffect(() => {
+    // Only load script on client side to avoid hydration issues
+    if (!scriptLoadedRef.current && containerRef.current) {
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://www.juicer.io/embed/laninabracelets/embed-code.js?per=3&gutter=20&columns=3&color=1c1917&after=1';
+      script.async = true;
+      script.defer = true;
+      
+      // Append script to container instead of head to keep it in the right section
+      containerRef.current.appendChild(script);
+      scriptLoadedRef.current = true;
+    }
+  }, []);
+
   return (
-    <section className="py-32 bg-white relative overflow-hidden">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="font-serif text-4xl md:text-5xl text-stone-900 mb-4"
-          >
-            #LaNinaBracelets
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-stone-600 font-light"
-          >
-            Styled by you! Tag ons op Instagram
-          </motion.p>
-        </div>
-
-        {/* Instagram Feed - Custom Implementation */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="mb-16"
-        >
-          {/* Direct Juicer Embed - Simplified */}
-          <div 
-            className="instagram-feed-wrapper"
-            dangerouslySetInnerHTML={{
-              __html: `
-                <script type="text/javascript" src="https://www.juicer.io/embed/laninabracelets/embed-code.js?per=3&gutter=20&columns=3&color=1c1917&after=1"></script>
-              `
-            }}
-          />
-        </motion.div>
-
-        {/* Call to Action */}
-        <div className="text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-          >
-            <a
-              href="https://instagram.com/laninabracelets"
-              target="_blank"
-              rel="noopener noreferrer"
+    <>
+      <section className="py-32 bg-white relative overflow-hidden">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="font-serif text-4xl md:text-5xl text-stone-900 mb-4"
             >
-              <Button variant="secondary" className="uppercase tracking-widest inline-flex items-center gap-2">
-                <Instagram size={18} />
-                Volg ons op Instagram
-                <ExternalLink size={16} />
-              </Button>
-            </a>
+              #LaNinaBracelets
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-stone-600 font-light"
+            >
+              Styled by you! Tag ons op Instagram
+            </motion.p>
+          </div>
+
+          {/* Instagram Feed Container */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="mb-16"
+          >
+            {/* Juicer will inject content here */}
+            <div 
+              ref={containerRef}
+              className="instagram-feed-wrapper min-h-[300px] flex items-center justify-center"
+            >
+              {/* Loading placeholder */}
+              <div className="text-stone-400 font-light">
+                Instagram posts laden...
+              </div>
+            </div>
           </motion.div>
+
+          {/* Call to Action */}
+          <div className="text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+            >
+              <a
+                href="https://instagram.com/laninabracelets"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="secondary" className="uppercase tracking-widest inline-flex items-center gap-2">
+                  <Instagram size={18} />
+                  Volg ons op Instagram
+                  <ExternalLink size={16} />
+                </Button>
+              </a>
+            </motion.div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* No separate script needed - included in dangerouslySetInnerHTML */}
-
-      {/* Custom Styling for Juicer Feed */}
+      {/* Global CSS for Juicer - Using regular CSS to avoid hydration issues */}
       <style jsx global>{`
         /* Instagram Feed Wrapper */
         .instagram-feed-wrapper {
@@ -134,16 +152,16 @@ export function InstagramSection() {
         
         /* Links */
         .juicer-feed a {
-          color: #1c1917 !important; /* stone-900 */
+          color: #1c1917 !important;
           text-decoration: none !important;
           transition: color 0.3s ease !important;
         }
         
         .juicer-feed a:hover {
-          color: #44403c !important; /* stone-700 */
+          color: #44403c !important;
         }
         
-        /* Responsive Grid - Override Juicer's grid */
+        /* Responsive Grid */
         @media (max-width: 640px) {
           .juicer-feed .feed-item {
             width: 100% !important;
@@ -166,6 +184,6 @@ export function InstagramSection() {
           }
         }
       `}</style>
-    </section>
+    </>
   );
 }
