@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { loadAndValidateOAuthState, clearOAuthState, saveOAuthTokens } from '@/src/lib/oauth-storage-serverless';
+import { loadAndValidateOAuthState, clearOAuthState, saveOAuthTokens } from '@/src/lib/oauth-storage-redis';
 import { exchangeCodeForTokens } from '@/src/lib/oauth-utils';
 
 /**

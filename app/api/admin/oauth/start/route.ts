@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { generateOAuthState, generatePKCE, buildEtsyOAuthUrl, REQUIRED_SCOPES } from '@/src/lib/oauth-utils';
-import { saveOAuthState } from '@/src/lib/oauth-storage-serverless';
+import { saveOAuthState } from '@/src/lib/oauth-storage-redis';
 
 /**
  * Start OAuth flow - redirect admin to Etsy for authorization

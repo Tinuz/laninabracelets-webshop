@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { loadOAuthTokens, areTokensValid, hasValidAuthentication } from '@/src/lib/oauth-storage-serverless';
+import { loadOAuthTokens, areTokensValid, hasValidAuthentication } from '@/src/lib/oauth-storage-redis';
 
 /**
  * Check OAuth authentication status
@@ -34,7 +34,7 @@ export async function GET() {
  */
 export async function DELETE() {
   try {
-    const { clearAllOAuthData } = await import('@/src/lib/oauth-storage-serverless');
+    const { clearAllOAuthData } = await import('@/src/lib/oauth-storage-redis');
     await clearAllOAuthData();
     
     return NextResponse.json({ success: true, message: 'OAuth tokens cleared' });

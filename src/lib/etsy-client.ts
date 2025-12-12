@@ -1,5 +1,5 @@
 import { EtsyListing, EtsyListingsResponse, EtsyShop, Product } from './etsy-types';
-import { getValidAccessToken } from './oauth-storage-serverless';
+import { getValidAccessToken } from './oauth-storage-redis';
 
 const ETSY_API_BASE = 'https://openapi.etsy.com/v3';
 const ETSY_SHOP_ID = process.env.ETSY_SHOP_ID || '';
