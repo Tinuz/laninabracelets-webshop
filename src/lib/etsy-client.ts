@@ -66,10 +66,13 @@ export async function getEtsyListings(limit: number = 100): Promise<EtsyListing[
     console.log('✅ Etsy API Success - Found listings:', data.results?.length || 0);
     
     if (data.results && data.results.length > 0) {
+      const sample = data.results[0];
       console.log('📝 Sample listing:', {
-        id: data.results[0].listing_id,
-        title: data.results[0].title,
-        state: data.results[0].state,
+        id: sample.listing_id,
+        title: sample.title,
+        state: sample.state,
+        images: sample.images?.length || 0,
+        main_image: sample.images?.[0]?.url_570xN,
       });
     }
     
