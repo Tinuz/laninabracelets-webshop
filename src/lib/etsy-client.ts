@@ -75,32 +75,33 @@ export async function getEtsyListings(limit: number = 100): Promise<EtsyListing[
         main_image: sample.images?.[0]?.url_570xN || 'no image',
       });
 
-      // If listings don't have images, try to fetch them separately
+      // If listings don't have images, fetch them individually
       if (!sample.images || sample.images.length === 0) {
-        console.log('⚠️  No images in listings response - trying separate image fetch...');
+        console.log('⚠️  No images in listings response - fetching images for each product...');
         
-        try {
-          const imageResponse = await fetch(
-            `${ETSY_API_BASE}/application/listings/${sample.listing_id}/images`,
-            { headers }
-          );
-          
-          if (imageResponse.ok) {
-            const imageData = await imageResponse.json();
-            console.log('🖼️  Separate image fetch result:', imageData.results?.length || 0);
-            
-            // Attach images to listings
-            if (imageData.results) {
-              data.results.forEach(listing => {
-                if (!listing.images || listing.images.length === 0) {
-                  listing.images = imageData.results;
-                }
-              });
+        // Fetch images for each listing individually
+        const imagePromises = data.results.map(async (listing) => {
+          if (!listing.images || listing.images.length === 0) {
+            try {
+              const imageResponse = await fetch(
+                `${ETSY_API_BASE}/application/listings/${listing.listing_id}/images`,
+                { headers }
+              );
+              
+              if (imageResponse.ok) {
+                const imageData = await imageResponse.json();
+                listing.images = imageData.results || [];
+                console.log(`🖼️  Fetched ${imageData.results?.length || 0} images for "${listing.title}"`);
+              }
+            } catch (imgError) {
+              console.warn(`Failed to fetch images for listing ${listing.listing_id}:`, imgError);
             }
           }
-        } catch (imgError) {
-          console.warn('Could not fetch images separately:', imgError);
-        }
+        });
+        
+        // Wait for all image requests to complete
+        await Promise.all(imagePromises);
+        console.log('✅ All image fetching completed');
       }
     }
     
