@@ -99,17 +99,15 @@ export interface EtsyShop {
 export interface Product {
   id: string;
   name: string;
-  price: number;
-  currency: string;
   image: string;
-  images: string[];
+  images?: string[];
   category: string;
   description: string;
-  isNew: boolean;
-  inStock: boolean;
-  quantity: number;
-  etsyUrl: string;
-  etsyListingId: number;
-  tags: string[];
+  isNew?: boolean;
+  isBestseller?: boolean;
+  inStock?: boolean;
+  etsyUrl?: string;
+  etsyListingId?: number;
+  tags?: string[];
 }
 
