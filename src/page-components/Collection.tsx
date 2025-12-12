@@ -9,7 +9,7 @@ import { ProductCard } from '../components-next/ProductCard';
 import { Filter } from 'lucide-react';
 
 type Category = 'all' | 'rings' | 'necklaces' | 'earrings' | 'bracelets';
-type SortOption = 'newest' | 'price-asc' | 'price-desc';
+type SortOption = 'newest' | 'name-asc' | 'name-desc';
 
 interface CollectionProps {
   products: Product[];
@@ -50,10 +50,12 @@ export function Collection({ products = [] }: CollectionProps) {
       result = result.filter(p => p.category === category);
     }
 
-    if (sort === 'price-asc') {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sort === 'price-desc') {
-      result.sort((a, b) => b.price - a.price);
+    if (sort === 'name-asc') {
+      result.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sort === 'name-desc') {
+      result.sort((a, b) => b.name.localeCompare(a.name));
+    } else if (sort === 'newest') {
+      result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
     }
 
     return result;
@@ -187,8 +189,8 @@ export function Collection({ products = [] }: CollectionProps) {
                   className="w-full bg-white border border-stone-300 text-stone-900 font-light py-3 px-4 focus:outline-none focus:border-stone-900 transition-colors rounded-none"
                 >
                   <option value="newest">Nieuwste</option>
-                  <option value="price-asc">Prijs: Laag naar Hoog</option>
-                  <option value="price-desc">Prijs: Hoog naar Laag</option>
+                  <option value="name-asc">Naam: A-Z</option>
+                  <option value="name-desc">Naam: Z-A</option>
                 </select>
               </div>
             </div>
@@ -275,8 +277,8 @@ export function Collection({ products = [] }: CollectionProps) {
                   className="w-full bg-transparent border-b border-stone-300 text-stone-900 font-light py-2 focus:outline-none focus:border-stone-900 transition-colors"
                 >
                   <option value="newest">Nieuwste</option>
-                  <option value="price-asc">Prijs: Laag naar Hoog</option>
-                  <option value="price-desc">Prijs: Hoog naar Laag</option>
+                  <option value="name-asc">Naam: A-Z</option>
+                  <option value="name-desc">Naam: Z-A</option>
                 </select>
               </div>
             </div>

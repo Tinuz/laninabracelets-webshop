@@ -95,19 +95,6 @@ export interface EtsyShop {
   url: string;
 }
 
-// Our internal Product type mapped from Etsy
-export interface Product {
-  id: string;
-  name: string;
-  image: string;
-  images?: string[];
-  category: string;
-  description: string;
-  isNew?: boolean;
-  isBestseller?: boolean;
-  inStock?: boolean;
-  etsyUrl?: string;
-  etsyListingId?: number;
-  tags?: string[];
-}
+// Re-export the Product interface from data.ts to avoid duplicates
+export type { Product } from './data';
 
