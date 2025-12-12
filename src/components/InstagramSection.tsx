@@ -30,7 +30,7 @@ export function InstagramSection() {
           </motion.p>
         </div>
 
-        {/* Juicer Instagram Feed */}
+        {/* Instagram Feed - Custom Implementation */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -38,11 +38,15 @@ export function InstagramSection() {
           transition={{ delay: 0.2 }}
           className="mb-16"
         >
-          {/* Juicer Container - styling via CSS below */}
-          <div className="juicer-instagram-feed">
-            {/* This div will be populated by Juicer */}
-            <div id="juicer-feed" data-feed-id="laninabracelets"></div>
-          </div>
+          {/* Direct Juicer Embed - Simplified */}
+          <div 
+            className="instagram-feed-wrapper"
+            dangerouslySetInnerHTML={{
+              __html: `
+                <script type="text/javascript" src="https://www.juicer.io/embed/laninabracelets/embed-code.js?per=3&gutter=20&columns=3&color=1c1917&after=1"></script>
+              `
+            }}
+          />
         </motion.div>
 
         {/* Call to Action */}
@@ -68,89 +72,97 @@ export function InstagramSection() {
         </div>
       </div>
 
-      {/* Juicer Script - Load with Next.js Script component for optimization */}
-      <Script
-        src="https://www.juicer.io/embed/laninabracelets/embed-code.js"
-        strategy="lazyOnload"
-        onLoad={() => {
-          console.log('Juicer Instagram feed loaded successfully');
-        }}
-      />
+      {/* No separate script needed - included in dangerouslySetInnerHTML */}
 
       {/* Custom Styling for Juicer Feed */}
       <style jsx global>{`
-        /* Custom Juicer Styling to match La Nina brand */
-        .juicer-feed {
-          max-width: 100% !important;
+        /* Instagram Feed Wrapper */
+        .instagram-feed-wrapper {
+          width: 100%;
+          margin: 0 auto;
         }
         
-        .juicer-feed .j-container {
-          margin: 0 auto !important;
+        /* Force Juicer to stay in this section */
+        .instagram-feed-wrapper .juicer-feed {
+          position: relative !important;
+          max-width: 100% !important;
+          margin: 0 !important;
           padding: 0 !important;
         }
         
-        .juicer-feed .j-message {
-          background: #f5f5f4 !important; /* stone-100 */
-          border: none !important;
-          border-radius: 0 !important;
-          color: #57534e !important; /* stone-600 */
-          font-family: inherit !important;
-          font-weight: 300 !important;
-          padding: 2rem !important;
-          text-align: center !important;
-        }
-        
-        .juicer-feed .j-message h1 {
-          color: #1c1917 !important; /* stone-900 */
-          font-family: var(--font-playfair), serif !important;
-          font-size: 1.5rem !important;
-          font-weight: 600 !important;
-          margin-bottom: 1rem !important;
-        }
-        
-        /* Individual post styling */
+        /* Individual Post Styling - La Nina Brand */
         .juicer-feed .feed-item {
           border: none !important;
           border-radius: 0 !important;
           box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
-          margin-bottom: 1rem !important;
-          transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+          transition: all 0.3s ease !important;
+          background: white !important;
+          overflow: hidden !important;
         }
         
         .juicer-feed .feed-item:hover {
-          transform: translateY(-2px) !important;
-          box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1) !important;
+          transform: translateY(-4px) !important;
+          box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15) !important;
         }
         
-        /* Hide Juicer branding if needed */
-        .juicer-feed .j-paginate {
-          background: #1c1917 !important; /* stone-900 */
-          color: white !important;
-          border: none !important;
+        /* Post Images */
+        .juicer-feed .feed-item img {
+          width: 100% !important;
+          height: auto !important;
+          aspect-ratio: 1 / 1 !important;
+          object-fit: cover !important;
           border-radius: 0 !important;
+          transition: transform 0.3s ease !important;
+        }
+        
+        .juicer-feed .feed-item:hover img {
+          transform: scale(1.05) !important;
+        }
+        
+        /* Hide Juicer branding & pagination */
+        .juicer-feed .j-credit,
+        .juicer-feed .j-paginate,
+        .juicer-feed .j-filter,
+        .juicer-feed .j-message {
+          display: none !important;
+        }
+        
+        /* Font Styling */
+        .juicer-feed * {
           font-family: var(--font-lato), sans-serif !important;
-          font-weight: 700 !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.1em !important;
-          padding: 0.75rem 2rem !important;
-          transition: background-color 0.3s ease !important;
         }
         
-        .juicer-feed .j-paginate:hover {
-          background: #44403c !important; /* stone-700 */
+        /* Links */
+        .juicer-feed a {
+          color: #1c1917 !important; /* stone-900 */
+          text-decoration: none !important;
+          transition: color 0.3s ease !important;
         }
         
-        /* Responsive grid for Juicer */
-        .juicer-feed .j-container .feed-item {
-          width: calc(50% - 0.5rem) !important;
-          margin-right: 0.5rem !important;
-          margin-bottom: 1rem !important;
+        .juicer-feed a:hover {
+          color: #44403c !important; /* stone-700 */
         }
         
-        @media (min-width: 768px) {
-          .juicer-feed .j-container .feed-item {
-            width: calc(25% - 0.75rem) !important;
-            margin-right: 1rem !important;
+        /* Responsive Grid - Override Juicer's grid */
+        @media (max-width: 640px) {
+          .juicer-feed .feed-item {
+            width: 100% !important;
+            margin: 0 0 1.5rem 0 !important;
+          }
+        }
+        
+        @media (min-width: 640px) {
+          .juicer-feed {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 1.5rem !important;
+            justify-content: center !important;
+          }
+          
+          .juicer-feed .feed-item {
+            width: calc(33.333% - 1rem) !important;
+            margin: 0 !important;
+            flex: 0 0 auto !important;
           }
         }
       `}</style>
