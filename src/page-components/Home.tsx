@@ -10,22 +10,11 @@ import { ProductCard } from '../components-next/ProductCard';
 import { Button } from '../components/ui/Button';
 import { InstagramSection } from '../components/InstagramSection';
 
-interface InstagramPost {
-  id: string;
-  media_type: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM';
-  media_url: string;
-  permalink: string;
-  caption?: string;
-  timestamp: string;
-  thumbnail_url?: string;
-}
-
 interface HomeProps {
   products: Product[];
-  instagramPosts?: InstagramPost[];
 }
 
-export function Home({ products = [], instagramPosts = [] }: HomeProps) {
+export function Home({ products = [] }: HomeProps) {
   const featuredProducts = products.slice(0, 3);
 
   return (
@@ -306,7 +295,7 @@ export function Home({ products = [], instagramPosts = [] }: HomeProps) {
       </section>
 
       {/* Instagram Section */}
-      <InstagramSection posts={instagramPosts} />
+      <InstagramSection />
 
       {/* Newsletter Section */}
       <section className="py-32 bg-stone-50 relative overflow-hidden">

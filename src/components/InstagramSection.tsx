@@ -4,25 +4,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Instagram, ExternalLink } from 'lucide-react';
 import { Button } from './ui/Button';
+import Script from 'next/script';
 
-interface InstagramPost {
-  id: string;
-  media_type: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM';
-  media_url: string;
-  permalink: string;
-  caption?: string;
-  timestamp: string;
-  thumbnail_url?: string;
-}
-
-interface InstagramSectionProps {
-  posts: InstagramPost[];
-}
-
-export function InstagramSection({ posts = [] }: InstagramSectionProps) {
-  // Show 8 posts in a 2x4 grid on mobile, 4x2 on desktop
-  const displayPosts = posts.slice(0, 8);
-
+export function InstagramSection() {
   return (
     <section className="py-32 bg-white relative overflow-hidden">
       <div className="container mx-auto px-6">
@@ -46,79 +30,20 @@ export function InstagramSection({ posts = [] }: InstagramSectionProps) {
           </motion.p>
         </div>
 
-        {displayPosts.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-            {displayPosts.map((post, index) => (
-              <motion.a
-                key={post.id}
-                href={post.permalink}
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className="group relative aspect-square overflow-hidden bg-stone-100 hover:shadow-xl transition-all duration-300"
-              >
-                {/* Image/Video */}
-                <img
-                  src={post.media_url}
-                  alt={post.caption?.slice(0, 100) || 'La Nina Bracelets Instagram post'}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-stone-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
-                  <Instagram size={32} className="drop-shadow-lg" />
-                </div>
-
-                {/* Video indicator */}
-                {post.media_type === 'VIDEO' && (
-                  <div className="absolute top-3 right-3 w-6 h-6 bg-stone-900/80 rounded-full flex items-center justify-center">
-                    <div className="w-0 h-0 border-l-[6px] border-l-white border-y-[3px] border-y-transparent ml-0.5" />
-                  </div>
-                )}
-
-                {/* Carousel indicator */}
-                {post.media_type === 'CAROUSEL_ALBUM' && (
-                  <div className="absolute top-3 right-3 w-6 h-6 bg-stone-900/80 rounded-full flex items-center justify-center">
-                    <div className="grid grid-cols-2 gap-0.5">
-                      {[...Array(4)].map((_, i) => (
-                        <div key={i} className="w-1 h-1 bg-white rounded-full" />
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </motion.a>
-            ))}
+        {/* Juicer Instagram Feed */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="mb-16"
+        >
+          {/* Juicer Container - styling via CSS below */}
+          <div className="juicer-instagram-feed">
+            {/* This div will be populated by Juicer */}
+            <div id="juicer-feed" data-feed-id="laninabracelets"></div>
           </div>
-        ) : (
-          /* Fallback when no posts available */
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <motion.a
-                key={i}
-                href="https://instagram.com/laninabracelets"
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="aspect-square bg-stone-100 overflow-hidden group relative"
-              >
-                <img 
-                  src={`https://source.unsplash.com/random/400x400?jewelry,bracelet&${i}`} 
-                  alt={`Instagram post ${i}`} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
-                />
-                <div className="absolute inset-0 bg-stone-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
-                  <Instagram size={32} />
-                </div>
-              </motion.a>
-            ))}
-          </div>
-        )}
+        </motion.div>
 
         {/* Call to Action */}
         <div className="text-center">
@@ -126,6 +51,7 @@ export function InstagramSection({ posts = [] }: InstagramSectionProps) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
           >
             <a
               href="https://instagram.com/laninabracelets"
@@ -141,6 +67,93 @@ export function InstagramSection({ posts = [] }: InstagramSectionProps) {
           </motion.div>
         </div>
       </div>
+
+      {/* Juicer Script - Load with Next.js Script component for optimization */}
+      <Script
+        src="https://www.juicer.io/embed/laninabracelets/embed-code.js"
+        strategy="lazyOnload"
+        onLoad={() => {
+          console.log('Juicer Instagram feed loaded successfully');
+        }}
+      />
+
+      {/* Custom Styling for Juicer Feed */}
+      <style jsx global>{`
+        /* Custom Juicer Styling to match La Nina brand */
+        .juicer-feed {
+          max-width: 100% !important;
+        }
+        
+        .juicer-feed .j-container {
+          margin: 0 auto !important;
+          padding: 0 !important;
+        }
+        
+        .juicer-feed .j-message {
+          background: #f5f5f4 !important; /* stone-100 */
+          border: none !important;
+          border-radius: 0 !important;
+          color: #57534e !important; /* stone-600 */
+          font-family: inherit !important;
+          font-weight: 300 !important;
+          padding: 2rem !important;
+          text-align: center !important;
+        }
+        
+        .juicer-feed .j-message h1 {
+          color: #1c1917 !important; /* stone-900 */
+          font-family: var(--font-playfair), serif !important;
+          font-size: 1.5rem !important;
+          font-weight: 600 !important;
+          margin-bottom: 1rem !important;
+        }
+        
+        /* Individual post styling */
+        .juicer-feed .feed-item {
+          border: none !important;
+          border-radius: 0 !important;
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+          margin-bottom: 1rem !important;
+          transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+        }
+        
+        .juicer-feed .feed-item:hover {
+          transform: translateY(-2px) !important;
+          box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1) !important;
+        }
+        
+        /* Hide Juicer branding if needed */
+        .juicer-feed .j-paginate {
+          background: #1c1917 !important; /* stone-900 */
+          color: white !important;
+          border: none !important;
+          border-radius: 0 !important;
+          font-family: var(--font-lato), sans-serif !important;
+          font-weight: 700 !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.1em !important;
+          padding: 0.75rem 2rem !important;
+          transition: background-color 0.3s ease !important;
+        }
+        
+        .juicer-feed .j-paginate:hover {
+          background: #44403c !important; /* stone-700 */
+        }
+        
+        /* Responsive grid for Juicer */
+        .juicer-feed .j-container .feed-item {
+          width: calc(50% - 0.5rem) !important;
+          margin-right: 0.5rem !important;
+          margin-bottom: 1rem !important;
+        }
+        
+        @media (min-width: 768px) {
+          .juicer-feed .j-container .feed-item {
+            width: calc(25% - 0.75rem) !important;
+            margin-right: 1rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
