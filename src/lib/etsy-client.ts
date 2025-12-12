@@ -39,7 +39,7 @@ export async function getEtsyListings(limit: number = 100): Promise<EtsyListing[
     console.log('🔗 Getting Etsy headers...');
     const headers = await getEtsyHeaders();
     
-    const url = `${ETSY_API_BASE}/application/shops/${ETSY_SHOP_ID}/listings/active?limit=${limit}&includes=images`;
+    const url = `${ETSY_API_BASE}/application/shops/${ETSY_SHOP_ID}/listings/active?limit=${limit}&include=images`;
     console.log('📡 Fetching from:', url);
     
     const response = await fetch(url, {
@@ -72,8 +72,36 @@ export async function getEtsyListings(limit: number = 100): Promise<EtsyListing[
         title: sample.title,
         state: sample.state,
         images: sample.images?.length || 0,
-        main_image: sample.images?.[0]?.url_570xN,
+        main_image: sample.images?.[0]?.url_570xN || 'no image',
       });
+
+      // If listings don't have images, try to fetch them separately
+      if (!sample.images || sample.images.length === 0) {
+        console.log('⚠️  No images in listings response - trying separate image fetch...');
+        
+        try {
+          const imageResponse = await fetch(
+            `${ETSY_API_BASE}/application/listings/${sample.listing_id}/images`,
+            { headers }
+          );
+          
+          if (imageResponse.ok) {
+            const imageData = await imageResponse.json();
+            console.log('🖼️  Separate image fetch result:', imageData.results?.length || 0);
+            
+            // Attach images to listings
+            if (imageData.results) {
+              data.results.forEach(listing => {
+                if (!listing.images || listing.images.length === 0) {
+                  listing.images = imageData.results;
+                }
+              });
+            }
+          }
+        } catch (imgError) {
+          console.warn('Could not fetch images separately:', imgError);
+        }
+      }
     }
     
     return data.results || [];
@@ -137,7 +165,7 @@ export async function getEtsyListingById(listingId: string): Promise<EtsyListing
     const headers = await getEtsyHeaders();
     
     const response = await fetch(
-      `${ETSY_API_BASE}/application/listings/${listingId}?includes=images`,
+      `${ETSY_API_BASE}/application/listings/${listingId}?include=images`,
       {
         headers,
         next: {
