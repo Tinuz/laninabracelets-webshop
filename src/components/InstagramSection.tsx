@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Instagram, ExternalLink } from 'lucide-react';
 import { Button } from './ui/Button';
@@ -8,15 +8,34 @@ import { Button } from './ui/Button';
 export function InstagramSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const scriptLoadedRef = useRef(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Only load script on client side to avoid hydration issues
     if (!scriptLoadedRef.current && containerRef.current) {
       const script = document.createElement('script');
       script.type = 'text/javascript';
-      script.src = 'https://www.juicer.io/embed/laninabracelets/embed-code.js?per=3&gutter=20&columns=3&color=1c1917&after=1';
+      script.src = 'https://www.juicer.io/embed/laninabracelets/embed-code.js?per=3&gutter=24&columns=3&color=1c1917&after=1';
       script.async = true;
       script.defer = true;
+      
+      // Check if Juicer content has loaded
+      const checkForContent = () => {
+        const juicerFeed = containerRef.current?.querySelector('.juicer-feed');
+        const feedItems = containerRef.current?.querySelectorAll('.juicer-feed .feed-item');
+        
+        if (juicerFeed && feedItems && feedItems.length > 0) {
+          setIsLoading(false);
+        } else {
+          // Keep checking for content
+          setTimeout(checkForContent, 500);
+        }
+      };
+      
+      // Start checking after script loads
+      script.onload = () => {
+        setTimeout(checkForContent, 1000);
+      };
       
       // Append script to container instead of head to keep it in the right section
       containerRef.current.appendChild(script);
@@ -59,12 +78,16 @@ export function InstagramSection() {
             {/* Juicer will inject content here */}
             <div 
               ref={containerRef}
-              className="instagram-feed-wrapper min-h-[300px] flex items-center justify-center"
+              className="instagram-feed-wrapper min-h-[400px] relative"
             >
-              {/* Loading placeholder */}
-              <div className="text-stone-400 font-light">
-                Instagram posts laden...
-              </div>
+              {/* Loading placeholder - only show when loading */}
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-stone-400 font-light">
+                    Instagram posts laden...
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
 
@@ -123,14 +146,19 @@ export function InstagramSection() {
           box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15) !important;
         }
         
-        /* Post Images */
+        /* Post Images - Larger Square Format */
         .juicer-feed .feed-item img {
           width: 100% !important;
-          height: auto !important;
-          aspect-ratio: 1 / 1 !important;
+          height: 280px !important;
           object-fit: cover !important;
           border-radius: 0 !important;
           transition: transform 0.3s ease !important;
+        }
+        
+        @media (min-width: 1024px) {
+          .juicer-feed .feed-item img {
+            height: 300px !important;
+          }
         }
         
         .juicer-feed .feed-item:hover img {
@@ -161,11 +189,12 @@ export function InstagramSection() {
           color: #44403c !important;
         }
         
-        /* Responsive Grid */
+        /* Responsive Grid - Larger Posts */
         @media (max-width: 640px) {
           .juicer-feed .feed-item {
             width: 100% !important;
-            margin: 0 0 1.5rem 0 !important;
+            max-width: 350px !important;
+            margin: 0 auto 2rem auto !important;
           }
         }
         
@@ -173,14 +202,24 @@ export function InstagramSection() {
           .juicer-feed {
             display: flex !important;
             flex-wrap: wrap !important;
-            gap: 1.5rem !important;
+            gap: 2rem !important;
             justify-content: center !important;
+            max-width: 1000px !important;
+            margin: 0 auto !important;
           }
           
           .juicer-feed .feed-item {
-            width: calc(33.333% - 1rem) !important;
+            width: 300px !important;
+            height: 400px !important;
             margin: 0 !important;
             flex: 0 0 auto !important;
+          }
+        }
+        
+        @media (min-width: 1024px) {
+          .juicer-feed .feed-item {
+            width: 320px !important;
+            height: 420px !important;
           }
         }
       `}</style>
