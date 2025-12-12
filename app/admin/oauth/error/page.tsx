@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 };
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     error?: string;
     description?: string;
-  };
+  }>;
 }
 
 const ERROR_MESSAGES: Record<string, { title: string; description: string; solution: string }> = {
@@ -44,9 +44,10 @@ const ERROR_MESSAGES: Record<string, { title: string; description: string; solut
   },
 };
 
-export default function OAuthErrorPage({ searchParams }: Props) {
-  const errorCode = searchParams.error || 'unknown';
-  const errorDescription = searchParams.description;
+export default async function OAuthErrorPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const errorCode = params.error || 'unknown';
+  const errorDescription = params.description;
   
   const errorInfo = ERROR_MESSAGES[errorCode] || {
     title: 'Onbekende Fout',
