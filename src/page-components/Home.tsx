@@ -3,17 +3,29 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, Star, Heart, Layers, Instagram } from 'lucide-react';
+import { ArrowRight, Star, Heart, Layers } from 'lucide-react';
 import Link from 'next/link';
 import { Product } from '../lib/data';
 import { ProductCard } from '../components-next/ProductCard';
 import { Button } from '../components/ui/Button';
+import { InstagramSection } from '../components/InstagramSection';
+
+interface InstagramPost {
+  id: string;
+  media_type: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM';
+  media_url: string;
+  permalink: string;
+  caption?: string;
+  timestamp: string;
+  thumbnail_url?: string;
+}
 
 interface HomeProps {
   products: Product[];
+  instagramPosts?: InstagramPost[];
 }
 
-export function Home({ products = [] }: HomeProps) {
+export function Home({ products = [], instagramPosts = [] }: HomeProps) {
   const featuredProducts = products.slice(0, 3);
 
   return (
@@ -294,40 +306,7 @@ export function Home({ products = [] }: HomeProps) {
       </section>
 
       {/* Instagram Section */}
-      <section className="py-32 bg-white relative overflow-hidden">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="font-serif text-4xl md:text-5xl text-stone-900 mb-4">
-            #LaNinaBracelets
-            </h2>
-            <p className="text-stone-600 font-light">
-            Styled by you! Tag ons op Instagram
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <motion.a
-                key={i}
-                href="https://instagram.com/laninabracelets"
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="aspect-square bg-stone-100 rounded-sm overflow-hidden group relative"
-              >
-                <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors" />
-                {/* Placeholder - vervang met echte Instagram feed */}
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-stone-400 text-xs uppercase tracking-widest">Instagram Post {i}</span>
-                </div>
-              </motion.a>
-            ))}
-          </div>
-        </div>
-      </section>
+      <InstagramSection posts={instagramPosts} />
 
       {/* Newsletter Section */}
       <section className="py-32 bg-stone-50 relative overflow-hidden">

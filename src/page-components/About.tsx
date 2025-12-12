@@ -14,7 +14,7 @@ export function About() {
       <section className="relative min-h-screen overflow-hidden bg-[#FDFBF7]">
         <div className="absolute inset-0">
           <img 
-            src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=2600&auto=format&fit=crop" 
+            src="/images/earrings_1.jpg" 
             alt="Artisan crafting jewelry" 
             className="w-full h-full object-cover object-center opacity-40"
           />
@@ -76,7 +76,7 @@ export function About() {
               className="aspect-[4/5] bg-stone-100 overflow-hidden"
             >
               <img 
-                src="https://images.unsplash.com/photo-1611652022419-a9419f74343a?q=80&w=1200&auto=format&fit=crop" 
+                src="/images/handmade.jpg"
                 alt="Handcrafting process"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               />
@@ -150,7 +150,7 @@ export function About() {
               className="lg:order-1 aspect-[4/5] bg-stone-100 overflow-hidden"
             >
               <img 
-                src="https://images.unsplash.com/photo-1602173574767-37ac01994b2a?q=80&w=1200&auto=format&fit=crop" 
+                src="/images/bracelets_1.jpg" 
                 alt="La Nina jewelry collection"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               />
