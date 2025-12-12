@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Save tokens
+    console.log('🔄 Saving OAuth tokens...');
     await saveOAuthTokens({
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
@@ -60,9 +61,11 @@ export async function GET(request: NextRequest) {
       token_type: tokens.token_type,
       scopes: oauthState.scopes,
     });
+    console.log('✅ Tokens saved');
 
     // Clear OAuth state
     await clearOAuthState();
+    console.log('🧹 OAuth state cleared');
 
     console.log('✅ OAuth flow completed successfully');
     

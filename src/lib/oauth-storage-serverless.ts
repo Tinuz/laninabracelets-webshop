@@ -88,9 +88,12 @@ export async function saveOAuthTokens(tokens: Partial<EtsyOAuthTokens>): Promise
   }
 
   // Encrypt and store in cookie
+  console.log('🔒 Encrypting tokens...');
   const encryptedTokens = await encrypt(updatedTokens);
+  console.log('📝 Getting cookie store...');
   const cookieStore = await cookies();
   
+  console.log('🍪 Setting cookie...');
   cookieStore.set(TOKENS_COOKIE, encryptedTokens, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',

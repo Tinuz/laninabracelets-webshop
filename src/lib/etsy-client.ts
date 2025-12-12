@@ -9,13 +9,19 @@ const ETSY_SHOP_ID = process.env.ETSY_SHOP_ID || '';
  */
 async function getEtsyHeaders(): Promise<HeadersInit> {
   const accessToken = await getValidAccessToken();
+  const ETSY_API_KEY = process.env.ETSY_API_KEY;
   
   if (!accessToken) {
     throw new Error('No valid OAuth token available. Please authenticate via /admin/oauth');
   }
 
+  if (!ETSY_API_KEY) {
+    throw new Error('ETSY_API_KEY environment variable not set');
+  }
+
   return {
     'Authorization': `Bearer ${accessToken}`,
+    'x-api-key': ETSY_API_KEY,
     'Content-Type': 'application/json',
   };
 }
@@ -30,19 +36,25 @@ export async function getEtsyListings(limit: number = 100): Promise<EtsyListing[
   }
 
   try {
+    console.log('🔗 Getting Etsy headers...');
     const headers = await getEtsyHeaders();
     
-    const response = await fetch(
-      `${ETSY_API_BASE}/application/shops/${ETSY_SHOP_ID}/listings/active?limit=${limit}&includes=images`,
-      {
-        headers,
-        next: {
-          revalidate: 3600, // Cache for 1 hour
-        },
-      }
-    );
+    const url = `${ETSY_API_BASE}/application/shops/${ETSY_SHOP_ID}/listings/active?limit=${limit}&includes=images`;
+    console.log('📡 Fetching from:', url);
+    
+    const response = await fetch(url, {
+      headers,
+      next: {
+        revalidate: 3600, // Cache for 1 hour
+      },
+    });
+
+    console.log('📊 Response status:', response.status);
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Etsy API Error:', response.status, errorText);
+      
       if (response.status === 401) {
         console.error('OAuth token expired or invalid. Please re-authenticate via /admin/oauth');
       }
@@ -51,6 +63,16 @@ export async function getEtsyListings(limit: number = 100): Promise<EtsyListing[
     }
 
     const data: EtsyListingsResponse = await response.json();
+    console.log('✅ Etsy API Success - Found listings:', data.results?.length || 0);
+    
+    if (data.results && data.results.length > 0) {
+      console.log('📝 Sample listing:', {
+        id: data.results[0].listing_id,
+        title: data.results[0].title,
+        state: data.results[0].state,
+      });
+    }
+    
     return data.results || [];
   } catch (error) {
     if (error instanceof Error && error.message.includes('OAuth')) {
