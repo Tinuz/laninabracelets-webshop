@@ -170,6 +170,12 @@ export function mapEtsyListingToProduct(listing: EtsyListing): Product {
   const price = listing.price ? listing.price.amount / listing.price.divisor : 0;
   const mainImage = listing.images?.[0]?.url_570xN || '/placeholder-image.jpg';
   const allImages = listing.images?.map(img => img.url_fullxfull) || [mainImage];
+  
+  console.log(`🖼️  Mapping product "${listing.title}":`, {
+    main_image: mainImage,
+    total_images: allImages.length,
+    domain_check: mainImage.includes('etsystatic.com') ? '✅ Etsy domain' : '⚠️  Non-Etsy domain'
+  });
 
   // Determine category from tags or materials
   let category = 'bracelets'; // default
