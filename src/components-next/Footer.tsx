@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Instagram, Facebook, Mail } from 'lucide-react';
+import { CookieSettingsButton } from '../components/CookieConsent';
 
 export function Footer() {
   return (
@@ -52,8 +53,9 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-stone-800 text-xs font-light text-stone-500">
           <p>&copy; {new Date().getFullYear()} La Nina Bracelets. Alle rechten voorbehouden.</p>
           <div className="flex gap-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-white transition-colors">Privacybeleid</a>
-            <a href="#" className="hover:text-white transition-colors">Algemene Voorwaarden</a>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacybeleid</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Algemene Voorwaarden</Link>
+            <CookieSettingsButton />
           </div>
         </div>
       </div>

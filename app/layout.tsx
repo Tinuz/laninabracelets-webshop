@@ -5,6 +5,7 @@ import { Navbar } from "@/src/components-next/Navbar";
 import { Footer } from "@/src/components-next/Footer";
 import { OrganizationSchema, WebsiteSchema } from "@/src/components/seo/StructuredData";
 import { GoogleAnalytics } from "@/src/components/analytics/GoogleAnalytics";
+import { CookieConsent } from "@/src/components/CookieConsent";
 
 const playfairDisplay = Playfair_Display({ 
   subsets: ["latin"],
@@ -103,7 +104,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="La Nina" />
       </head>
       <body className="font-sans antialiased">
-        <GoogleAnalytics GA_MEASUREMENT_ID="G-9VX19LKH01" />
+        <GoogleAnalytics measurementId="G-9VX19LKH01" />
         <OrganizationSchema
           name="La Nina Bracelets"
           url="https://www.laninabracelets.com"
@@ -139,6 +140,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <CookieConsent />
       </body>
     </html>
   );
