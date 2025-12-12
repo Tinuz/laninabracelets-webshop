@@ -14,6 +14,11 @@ ETSY_API_KEY=rg4tmn3xzesq2a5vczf0os1w
 ETSY_SHARED_SECRET=zws4h3pm4j  
 ETSY_SHOP_ID=63450436
 
+# Mailchimp Newsletter Configuration
+MAILCHIMP_API_KEY=jouw-api-key-hier
+MAILCHIMP_AUDIENCE_ID=jouw-audience-id-hier
+MAILCHIMP_SERVER_PREFIX=usXX
+
 # Site Configuration
 NEXT_PUBLIC_SITE_URL=https://www.laninabracelets.com
 ```
@@ -49,6 +54,7 @@ NEXT_PUBLIC_SITE_URL=https://www.laninabracelets.com
    - ✅ Product filtering (New/Bestsellers)
    - ✅ About page displays
    - ✅ Google Analytics tracking
+   - ✅ Newsletter subscription (Mailchimp)
 
 ---
 

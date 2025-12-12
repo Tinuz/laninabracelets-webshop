@@ -9,6 +9,7 @@ import { Product } from '../lib/data';
 import { ProductCard } from '../components-next/ProductCard';
 import { Button } from '../components/ui/Button';
 import { InstagramSection } from '../components/InstagramSection';
+import { NewsletterForm } from '../components/NewsletterForm';
 
 interface HomeProps {
   products: Product[];
@@ -328,16 +329,8 @@ export function Home({ products = [] }: HomeProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
             >
-              <input 
-                type="email" 
-                placeholder="Jouw e-mailadres" 
-                className="flex-1 px-6 py-4 border border-stone-300 bg-white text-stone-900 placeholder-stone-400 focus:outline-none focus:border-stone-900 transition-colors font-light"
-              />
-              <Button className="sm:w-auto whitespace-nowrap px-8 py-4">
-                Schrijf In
-              </Button>
+              <NewsletterForm />
             </motion.div>
             <p className="text-xs text-stone-500 font-light">
               We respecteren jouw privacy. Geen spam, alleen mooie verhalen.
