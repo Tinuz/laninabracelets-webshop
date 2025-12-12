@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { generateOAuthState, generatePKCE, buildEtsyOAuthUrl, REQUIRED_SCOPES } from '@/src/lib/oauth-utils';
-import { saveOAuthState } from '@/src/lib/oauth-storage';
+import { saveOAuthState } from '@/src/lib/oauth-storage-serverless';
 
 /**
  * Start OAuth flow - redirect admin to Etsy for authorization
@@ -22,7 +22,7 @@ export async function GET() {
     const scopes = REQUIRED_SCOPES.slice(); // Copy required scopes
 
     // Save OAuth state for validation
-    saveOAuthState({
+    await saveOAuthState({
       state,
       code_verifier: pkce.verifier,
       code_challenge: pkce.challenge,

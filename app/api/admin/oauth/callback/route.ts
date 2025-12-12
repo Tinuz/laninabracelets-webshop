@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { loadAndValidateOAuthState, clearOAuthState, saveOAuthTokens } from '@/src/lib/oauth-storage';
+import { loadAndValidateOAuthState, clearOAuthState, saveOAuthTokens } from '@/src/lib/oauth-storage-serverless';
 import { exchangeCodeForTokens } from '@/src/lib/oauth-utils';
 
 /**
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Validate state and get OAuth parameters
-    const oauthState = loadAndValidateOAuthState(state);
+    const oauthState = await loadAndValidateOAuthState(state);
     if (!oauthState) {
       console.error('Invalid OAuth state');
       return NextResponse.redirect(
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Save tokens
-    saveOAuthTokens({
+    await saveOAuthTokens({
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       expires_at: Date.now() + (tokens.expires_in * 1000),
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Clear OAuth state
-    clearOAuthState();
+    await clearOAuthState();
 
     console.log('✅ OAuth flow completed successfully');
     
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('OAuth callback error:', error);
-    clearOAuthState(); // Clean up on error
+    await clearOAuthState(); // Clean up on error
     
     return NextResponse.redirect(
       new URL(`/admin/oauth/error?error=token_exchange_failed&description=${encodeURIComponent(error instanceof Error ? error.message : 'Unknown error')}`, request.url)

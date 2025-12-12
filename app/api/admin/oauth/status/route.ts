@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
-import { loadOAuthTokens, areTokensValid, hasValidAuthentication } from '@/src/lib/oauth-storage';
+import { loadOAuthTokens, areTokensValid, hasValidAuthentication } from '@/src/lib/oauth-storage-serverless';
 
 /**
  * Check OAuth authentication status
  */
 export async function GET() {
   try {
-    const tokens = loadOAuthTokens();
-    const isValid = areTokensValid();
-    const hasAuth = hasValidAuthentication();
+    const tokens = await loadOAuthTokens();
+    const isValid = await areTokensValid();
+    const hasAuth = await hasValidAuthentication();
 
     return NextResponse.json({
       authenticated: hasAuth,
@@ -34,8 +34,8 @@ export async function GET() {
  */
 export async function DELETE() {
   try {
-    const { clearAllOAuthData } = await import('@/src/lib/oauth-storage');
-    clearAllOAuthData();
+    const { clearAllOAuthData } = await import('@/src/lib/oauth-storage-serverless');
+    await clearAllOAuthData();
     
     return NextResponse.json({ success: true, message: 'OAuth tokens cleared' });
   } catch (error) {
