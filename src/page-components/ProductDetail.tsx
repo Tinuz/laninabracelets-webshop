@@ -17,7 +17,8 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ product, relatedProducts = [] }: ProductDetailProps) {
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   if (!product) {
     return (
@@ -28,7 +29,14 @@ export function ProductDetail({ product, relatedProducts = [] }: ProductDetailPr
     );
   }
 
-  const sizes = ['5', '6', '7', '8']; // simplified for demo
+  // Get truncated description (first 2 sentences)
+  const getTruncatedDescription = (text: string) => {
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    return sentences.slice(0, 2).join('. ') + (sentences.length > 2 ? '.' : '');
+  };
+
+  const truncatedDescription = getTruncatedDescription(product?.description || '');
+  const shouldShowReadMore = product?.description && product.description.split(/[.!?]+/).filter(s => s.trim().length > 0).length > 2;
 
   return (
     <div className="pt-24 min-h-screen bg-background relative overflow-hidden">
@@ -52,16 +60,45 @@ export function ProductDetail({ product, relatedProducts = [] }: ProductDetailPr
       <div className="container mx-auto px-6 mb-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-24">
           
-          {/* Gallery - Simplified Single Image for MVP */}
-          <div className="bg-white p-4 rounded-3xl shadow-xl shadow-purple-900/5 aspect-[4/5] w-full overflow-hidden relative">
-             <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-tr from-purple-100/50 to-pink-100/50 rounded-2xl pointer-events-none" />
-             <motion.img 
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               src={product.image} 
-               alt={product.name}
-               className="w-full h-full object-cover object-center rounded-2xl"
-             />
+          {/* Image Gallery */}
+          <div className="space-y-4">
+            {/* Main Image */}
+            <div className="bg-white p-4 rounded-3xl shadow-xl shadow-purple-900/5 aspect-[4/5] w-full overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-tr from-purple-100/50 to-pink-100/50 rounded-2xl pointer-events-none" />
+              <motion.img 
+                key={selectedImageIndex}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                src={product.images?.[selectedImageIndex] || product.image} 
+                alt={`${product.name} - Afbeelding ${selectedImageIndex + 1}`}
+                className="w-full h-full object-cover object-center rounded-2xl"
+              />
+            </div>
+            
+            {/* Thumbnail Navigation */}
+            {product.images && product.images.length > 1 && (
+              <div className="flex gap-3 justify-center">
+                {product.images.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImageIndex(index)}
+                    className={`
+                      w-16 h-16 rounded-xl overflow-hidden transition-all duration-200
+                      ${index === selectedImageIndex 
+                        ? 'ring-2 ring-purple-600 ring-offset-2 shadow-lg' 
+                        : 'opacity-60 hover:opacity-100 hover:shadow-md'}
+                    `}
+                  >
+                    <img
+                      src={image}
+                      alt={`${product.name} thumbnail ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Info */}
@@ -76,35 +113,21 @@ export function ProductDetail({ product, relatedProducts = [] }: ProductDetailPr
               Handgemaakt • Betaalbaar • Uniek
             </p>
 
+            {/* Description with Read More */}
             <div className="prose prose-sm text-purple-900/70 mb-8 max-w-md">
-              <p>{product.description}</p>
+              <p>
+                {showFullDescription ? product.description : truncatedDescription}
+              </p>
+              {shouldShowReadMore && (
+                <button
+                  onClick={() => setShowFullDescription(!showFullDescription)}
+                  className="text-purple-600 hover:text-purple-800 font-medium text-sm underline mt-2 transition-colors"
+                >
+                  {showFullDescription ? 'Minder tonen' : 'Meer lezen'}
+                </button>
+              )}
             </div>
 
-            {/* Sizes - Only for Rings */}
-            {product.category === 'rings' && (
-              <div className="mb-8">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-bold text-foreground">Selecteer Maat</span>
-                  <button className="text-xs text-primary underline">Maattabel</button>
-                </div>
-                <div className="flex gap-3">
-                  {sizes.map(size => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`
-                        w-12 h-12 flex items-center justify-center border-2 rounded-lg transition-all font-bold
-                        ${selectedSize === size 
-                          ? 'border-primary bg-primary text-white shadow-lg shadow-purple-500/30' 
-                          : 'border-purple-100 text-purple-900/60 hover:border-primary hover:text-primary bg-white'}
-                      `}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
             <div className="space-y-4 max-w-md">
               {product.etsyUrl ? (
