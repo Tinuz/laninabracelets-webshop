@@ -102,6 +102,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="La Nina" />
+        <meta name="google-site-verification" content="ICgVWYgcilS9zSfEc39q_KVccmR4ocR59xFZAtKthqI" />
       </head>
       <body className="font-sans antialiased">
         <GoogleAnalytics measurementId="G-9VX19LKH01" />
