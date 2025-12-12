@@ -10,6 +10,7 @@ export interface EtsyOAuthTokens {
   access_token: string;
   refresh_token: string;
   expires_at: number; // Unix timestamp
+  expires_in?: number; // Seconds from now (only used during token exchange)
   token_type: string;
   user_id?: string; // Etsy user ID (prefix from token)
   scopes?: string[];
