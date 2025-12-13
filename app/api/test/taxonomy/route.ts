@@ -6,7 +6,7 @@ const ETSY_SHOP_ID = process.env.ETSY_SHOP_ID || '';
 
 /**
  * Test endpoint to analyze Etsy taxonomy mapping
- * Uses BuyerTaxonomy API: https://developer.etsy.com/documentation/reference/#tag/BuyerTaxonomy
+ * Uses SellerTaxonomy API: https://developer.etsy.com/documentation/reference/#tag/SellerTaxonomy
  */
 export async function GET() {
   try {
@@ -71,33 +71,37 @@ export async function GET() {
       let taxonomyPath = [];
       let category = 'unknown';
 
-      if (listing.taxonomy_id) {
+        if (listing.taxonomy_id) {
         try {
-          // Get taxonomy node
+          // Get SellerTaxonomy node - more accurate for seller-created listings
           const taxonomyResponse = await fetch(
-            `${ETSY_API_BASE}/application/buyer-taxonomy/nodes/${listing.taxonomy_id}`,
+            `${ETSY_API_BASE}/application/seller-taxonomy/nodes/${listing.taxonomy_id}`,
             { headers }
           );
 
           if (taxonomyResponse.ok) {
             taxonomyInfo = await taxonomyResponse.json();
+            console.log(`📂 SellerTaxonomy for "${listing.title}":`, taxonomyInfo);
 
-            // Get taxonomy path (breadcrumb)
+            // Get taxonomy path (breadcrumb) for SellerTaxonomy
             const pathResponse = await fetch(
-              `${ETSY_API_BASE}/application/buyer-taxonomy/nodes/${listing.taxonomy_id}/path`,
+              `${ETSY_API_BASE}/application/seller-taxonomy/nodes/${listing.taxonomy_id}/path`,
               { headers }
             );
 
             if (pathResponse.ok) {
               const pathData = await pathResponse.json();
               taxonomyPath = pathData.results || [];
+              console.log(`🗂️  SellerTaxonomy path:`, taxonomyPath.map(p => p.name).join(' > '));
             }
 
             // Map to our category
-            category = mapTaxonomyToCategory(taxonomyInfo, taxonomyPath);
+            category = mapSellerTaxonomyToCategory(taxonomyInfo, taxonomyPath);
+          } else {
+            console.warn(`SellerTaxonomy not found for taxonomy_id ${listing.taxonomy_id}, response:`, taxonomyResponse.status);
           }
         } catch (taxonomyError) {
-          console.warn(`Failed to fetch taxonomy for ${listing.listing_id}:`, taxonomyError);
+          console.warn(`Failed to fetch SellerTaxonomy for ${listing.listing_id}:`, taxonomyError);
         }
       }
 
@@ -105,11 +109,17 @@ export async function GET() {
         listingId: listing.listing_id,
         title: listing.title,
         taxonomyId: listing.taxonomy_id,
-        etsyCategory: taxonomyInfo?.name || 'Unknown',
-        taxonomyPath: taxonomyPath.map(p => p.name).join(' > '),
+        etsySellerCategory: taxonomyInfo?.name || 'Unknown',
+        sellerTaxonomyPath: taxonomyPath.map(p => p.name).join(' > '),
         ourCategory: category,
         tags: listing.tags?.slice(0, 5) || [],
         url: listing.url,
+        fullTaxonomyInfo: taxonomyInfo ? {
+          id: taxonomyInfo.id,
+          name: taxonomyInfo.name,
+          level: taxonomyInfo.level,
+          full_path_taxonomy_ids: taxonomyInfo.full_path_taxonomy_ids
+        } : null,
       });
     }
 
@@ -133,9 +143,9 @@ export async function GET() {
 }
 
 /**
- * Map Etsy taxonomy to our internal categories
+ * Map Etsy SellerTaxonomy to our internal categories
  */
-function mapTaxonomyToCategory(taxonomy: any, taxonomyPath: any[]): string {
+function mapSellerTaxonomyToCategory(taxonomy: any, taxonomyPath: any[]): string {
   if (!taxonomy) return 'unknown';
   
   // Get all names from the taxonomy path (parent categories)
@@ -144,34 +154,59 @@ function mapTaxonomyToCategory(taxonomy: any, taxonomyPath: any[]): string {
     ...taxonomyPath.map(p => p.name.toLowerCase())
   ];
 
-  console.log(`🎯 Taxonomy analysis for "${taxonomy.name}":`, allNames);
+  console.log(`🎯 SellerTaxonomy analysis for "${taxonomy.name}":`, allNames);
 
-  // Enhanced category mapping based on official Etsy taxonomy
+  // Enhanced category mapping based on SellerTaxonomy structure
+  // SellerTaxonomy often has more specific seller-focused categories
+  
+  // Earrings - extensive matching including seller terminology
   if (allNames.some(name => 
-    name.includes('earring') || name.includes('ear') || name.includes('studs')
+    name.includes('earring') || name.includes('ear') || name.includes('stud') || 
+    name.includes('hoop') || name.includes('drop') || name.includes('dangle') ||
+    name.includes('chandelier') || name.includes('climber') || name.includes('huggie')
   )) {
     return 'earrings';
   }
   
+  // Necklaces - seller taxonomy often separates these clearly
   if (allNames.some(name => 
-    name.includes('necklace') || name.includes('pendant') || name.includes('chain') || name.includes('choker')
+    name.includes('necklace') || name.includes('pendant') || name.includes('chain') || 
+    name.includes('choker') || name.includes('collar') || name.includes('lariat') ||
+    name.includes('y necklace') || name.includes('statement necklace')
   )) {
     return 'necklaces';
   }
   
+  // Bracelets - including seller-specific terms
   if (allNames.some(name => 
-    name.includes('bracelet') || name.includes('bangle') || name.includes('wrist') || name.includes('anklet')
+    name.includes('bracelet') || name.includes('bangle') || name.includes('wrist') || 
+    name.includes('anklet') || name.includes('charm bracelet') || name.includes('cuff') ||
+    name.includes('tennis bracelet') || name.includes('wrap bracelet')
   )) {
     return 'bracelets';
   }
   
+  // Rings - excluding earrings but including ring-specific terms
   if (allNames.some(name => 
-    name.includes('ring') && !name.includes('earring')
+    name.includes('ring') && !name.includes('earring') && !name.includes('spring')
   )) {
     return 'rings';
   }
 
-  // Default fallback
+  // Check for broader jewelry categories in SellerTaxonomy
+  if (allNames.some(name => 
+    name.includes('jewelry') || name.includes('jewellery')
+  )) {
+    // If we have jewelry but can't categorize specifically, use tags as backup
+    const tagHints = (taxonomy.name || '').toLowerCase();
+    
+    if (tagHints.includes('ear')) return 'earrings';
+    if (tagHints.includes('neck') || tagHints.includes('chain')) return 'necklaces';
+    if (tagHints.includes('wrist') || tagHints.includes('arm')) return 'bracelets';
+    if (tagHints.includes('finger') || tagHints.includes('ring')) return 'rings';
+  }
+
+  // Default fallback - most jewelry shops have bracelets as primary
   return 'bracelets';
 }
 
