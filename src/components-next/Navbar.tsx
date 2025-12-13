@@ -74,19 +74,19 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center">
-          {/* Etsy Shop Link */}
-          <a
-            href="https://www.etsy.com/shop/LaNinaBracelets"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-2 px-4 py-2 text-stone-900 hover:text-stone-600 transition-colors"
-            aria-label="Bezoek onze Etsy Shop"
-          >
-            <ExternalLink size={20} className="group-hover:scale-110 transition-transform" />
-            <span className="hidden sm:block text-xs font-bold tracking-widest uppercase font-sans">
-              Shop
-            </span>
-          </a>
+          {/* Etsy Shop Link - Client-side only to prevent hydration issues */}
+          <div className="group flex items-center gap-2 px-4 py-2 text-stone-900 hover:text-stone-600 transition-colors">
+            <button
+              onClick={() => window.open('https://www.etsy.com/shop/LaNinaBracelets', '_blank', 'noopener,noreferrer')}
+              className="flex items-center gap-2 group"
+              aria-label="Bezoek onze Etsy Shop"
+            >
+              <ExternalLink size={20} className="group-hover:scale-110 transition-transform" />
+              <span className="hidden sm:block text-xs font-bold tracking-widest uppercase font-sans">
+                Shop
+              </span>
+            </button>
+          </div>
         </div>
       </div>
       
@@ -166,16 +166,16 @@ export function Navbar() {
                   >
                     Bekijk Collectie
                   </Link>
-                  <a
-                    href="https://www.etsy.com/shop/LaNinaBracelets"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <button
+                    onClick={() => {
+                      window.open('https://www.etsy.com/shop/LaNinaBracelets', '_blank', 'noopener,noreferrer');
+                      setIsMobileMenuOpen(false);
+                    }}
                     className="w-full flex items-center justify-center gap-3 py-3 border-2 border-stone-900 text-stone-900 font-bold uppercase tracking-widest text-sm transition-colors hover:bg-stone-900 hover:text-white"
                   >
                     <ExternalLink size={16} />
                     Etsy Shop
-                  </a>
+                  </button>
                 </div>
               </div>
             </motion.div>
