@@ -206,36 +206,45 @@ export function mapEtsyListingToProduct(listing: EtsyListing): Product {
     domain_check: mainImage.includes('etsystatic.com') ? '✅ Etsy domain' : '⚠️  Non-Etsy domain'
   });
 
-  // Determine category from tags or materials (with extensive matching)
+  // Determine category from tags - optimized for Nina's Dutch tagging system
   let category = 'bracelets'; // default
-  const tags = (listing.tags || []).map(t => t.toLowerCase());
-  const materials = (listing.materials || []).map(m => m.toLowerCase());
+  const tags = (listing.tags || []).map(t => t.toLowerCase().trim());
   const title = listing.title.toLowerCase();
-  const allSearchTerms = [...tags, ...materials, title];
+  const allSearchTerms = [...tags, title];
   
-  console.log(`🏷️  Product "${listing.title}" - Tags:`, tags, 'Materials:', materials);
+  console.log(`🏷️  Product "${listing.title}" - Tags:`, tags);
   
-  // Enhanced category detection with multiple keywords
-  if (allSearchTerms.some(term => 
-    term.includes('ring') || term.includes('ringen')
-  )) {
-    category = 'rings';
-  } else if (allSearchTerms.some(term => 
-    term.includes('necklace') || term.includes('ketting') || term.includes('halsketting') || term.includes('chain')
-  )) {
+  // Priority-based category detection using Nina's tagging system
+  // Check for exact Dutch category tags first (most reliable)
+  if (tags.includes('oorbel') || tags.includes('oorbellen')) {
+    category = 'earrings';
+  } else if (tags.includes('armband') || tags.includes('armbanden')) {
+    category = 'bracelets';
+  } else if (tags.includes('ketting') || tags.includes('kettingen')) {
     category = 'necklaces';
-  } else if (allSearchTerms.some(term => 
-    term.includes('earring') || term.includes('oorbel') || term.includes('oorbellen') || 
-    term.includes('ear') || term.includes('stud') || term.includes('hoop') || term.includes('drop')
+  } else if (tags.includes('ring') || tags.includes('ringen')) {
+    category = 'rings';
+  }
+  // Fallback: check in title and broader tag matching
+  else if (allSearchTerms.some(term => 
+    term.includes('oorbel') || term.includes('earring') || term.includes('ear')
   )) {
     category = 'earrings';
   } else if (allSearchTerms.some(term => 
-    term.includes('bracelet') || term.includes('armband') || term.includes('bangle') || term.includes('wrist')
+    term.includes('ketting') || term.includes('necklace') || term.includes('halsketting') || term.includes('chain')
+  )) {
+    category = 'necklaces';
+  } else if (allSearchTerms.some(term => 
+    term.includes('armband') || term.includes('bracelet') || term.includes('bangle')
   )) {
     category = 'bracelets';
+  } else if (allSearchTerms.some(term => 
+    term.includes('ring') && !term.includes('earring') && !term.includes('oorbel')
+  )) {
+    category = 'rings';
   }
   
-  console.log(`📂 Category determined: "${category}" for "${listing.title}"`);
+  console.log(`📂 Category: "${category}" (tags: ${tags.slice(0, 3).join(', ')})`);
 
   // Check if listing is new (created in last 30 days)
   const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
