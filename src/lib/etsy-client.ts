@@ -206,19 +206,36 @@ export function mapEtsyListingToProduct(listing: EtsyListing): Product {
     domain_check: mainImage.includes('etsystatic.com') ? '✅ Etsy domain' : '⚠️  Non-Etsy domain'
   });
 
-  // Determine category from tags or materials
+  // Determine category from tags or materials (with extensive matching)
   let category = 'bracelets'; // default
   const tags = (listing.tags || []).map(t => t.toLowerCase());
+  const materials = (listing.materials || []).map(m => m.toLowerCase());
+  const title = listing.title.toLowerCase();
+  const allSearchTerms = [...tags, ...materials, title];
   
-  if (tags.some(t => t.includes('ring'))) {
+  console.log(`🏷️  Product "${listing.title}" - Tags:`, tags, 'Materials:', materials);
+  
+  // Enhanced category detection with multiple keywords
+  if (allSearchTerms.some(term => 
+    term.includes('ring') || term.includes('ringen')
+  )) {
     category = 'rings';
-  } else if (tags.some(t => t.includes('necklace') || t.includes('ketting'))) {
+  } else if (allSearchTerms.some(term => 
+    term.includes('necklace') || term.includes('ketting') || term.includes('halsketting') || term.includes('chain')
+  )) {
     category = 'necklaces';
-  } else if (tags.some(t => t.includes('earring') || t.includes('oorbel'))) {
+  } else if (allSearchTerms.some(term => 
+    term.includes('earring') || term.includes('oorbel') || term.includes('oorbellen') || 
+    term.includes('ear') || term.includes('stud') || term.includes('hoop') || term.includes('drop')
+  )) {
     category = 'earrings';
-  } else if (tags.some(t => t.includes('bracelet') || t.includes('armband'))) {
+  } else if (allSearchTerms.some(term => 
+    term.includes('bracelet') || term.includes('armband') || term.includes('bangle') || term.includes('wrist')
+  )) {
     category = 'bracelets';
   }
+  
+  console.log(`📂 Category determined: "${category}" for "${listing.title}"`);
 
   // Check if listing is new (created in last 30 days)
   const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
