@@ -72,18 +72,23 @@ export async function GET() {
       let category = 'unknown';
 
         if (listing.taxonomy_id) {
+        let taxonomySource = 'none';
+        
         try {
-          // Get SellerTaxonomy node - more accurate for seller-created listings
-          const taxonomyResponse = await fetch(
+          // Try SellerTaxonomy first - more accurate for seller-created listings
+          console.log(`🔍 Trying SellerTaxonomy for taxonomy_id: ${listing.taxonomy_id}`);
+          
+          const sellerTaxonomyResponse = await fetch(
             `${ETSY_API_BASE}/application/seller-taxonomy/nodes/${listing.taxonomy_id}`,
             { headers }
           );
 
-          if (taxonomyResponse.ok) {
-            taxonomyInfo = await taxonomyResponse.json();
-            console.log(`📂 SellerTaxonomy for "${listing.title}":`, taxonomyInfo);
+          if (sellerTaxonomyResponse.ok) {
+            taxonomyInfo = await sellerTaxonomyResponse.json();
+            taxonomySource = 'seller';
+            console.log(`✅ SellerTaxonomy found for "${listing.title}":`, taxonomyInfo.name);
 
-            // Get taxonomy path (breadcrumb) for SellerTaxonomy
+            // Get taxonomy path for SellerTaxonomy
             const pathResponse = await fetch(
               `${ETSY_API_BASE}/application/seller-taxonomy/nodes/${listing.taxonomy_id}/path`,
               { headers }
@@ -92,32 +97,73 @@ export async function GET() {
             if (pathResponse.ok) {
               const pathData = await pathResponse.json();
               taxonomyPath = pathData.results || [];
-              console.log(`🗂️  SellerTaxonomy path:`, taxonomyPath.map(p => p.name).join(' > '));
             }
 
-            // Map to our category
             category = mapSellerTaxonomyToCategory(taxonomyInfo, taxonomyPath);
+            
+          } else if (sellerTaxonomyResponse.status === 404) {
+            // Fallback to BuyerTaxonomy if SellerTaxonomy doesn't exist
+            console.log(`⚠️  SellerTaxonomy 404 for taxonomy_id ${listing.taxonomy_id}, trying BuyerTaxonomy...`);
+            
+            const buyerTaxonomyResponse = await fetch(
+              `${ETSY_API_BASE}/application/buyer-taxonomy/nodes/${listing.taxonomy_id}`,
+              { headers }
+            );
+
+            if (buyerTaxonomyResponse.ok) {
+              taxonomyInfo = await buyerTaxonomyResponse.json();
+              taxonomySource = 'buyer';
+              console.log(`✅ BuyerTaxonomy found for "${listing.title}":`, taxonomyInfo.name);
+
+              // Get taxonomy path for BuyerTaxonomy
+              const pathResponse = await fetch(
+                `${ETSY_API_BASE}/application/buyer-taxonomy/nodes/${listing.taxonomy_id}/path`,
+                { headers }
+              );
+
+              if (pathResponse.ok) {
+                const pathData = await pathResponse.json();
+                taxonomyPath = pathData.results || [];
+              }
+
+              category = mapBuyerTaxonomyToCategory(taxonomyInfo, taxonomyPath);
+              
+            } else {
+              console.warn(`❌ Both SellerTaxonomy and BuyerTaxonomy failed for taxonomy_id ${listing.taxonomy_id}`);
+              taxonomySource = 'failed';
+              // Will fall back to tag-based categorization
+              category = mapTagsToCategory(listing);
+            }
           } else {
-            console.warn(`SellerTaxonomy not found for taxonomy_id ${listing.taxonomy_id}, response:`, taxonomyResponse.status);
+            console.warn(`SellerTaxonomy error ${sellerTaxonomyResponse.status} for taxonomy_id ${listing.taxonomy_id}`);
+            taxonomySource = 'failed';
+            category = mapTagsToCategory(listing);
           }
         } catch (taxonomyError) {
-          console.warn(`Failed to fetch SellerTaxonomy for ${listing.listing_id}:`, taxonomyError);
+          console.warn(`Taxonomy fetch error for ${listing.listing_id}:`, taxonomyError);
+          taxonomySource = 'error';
+          category = mapTagsToCategory(listing);
         }
+        
+        // Add taxonomy source to result for debugging
+        taxonomyInfo = taxonomyInfo ? { ...taxonomyInfo, _source: taxonomySource } : { _source: taxonomySource };
       }
 
       results.push({
         listingId: listing.listing_id,
         title: listing.title,
         taxonomyId: listing.taxonomy_id,
-        etsySellerCategory: taxonomyInfo?.name || 'Unknown',
-        sellerTaxonomyPath: taxonomyPath.map(p => p.name).join(' > '),
+        taxonomySource: taxonomyInfo?._source || 'none',
+        etsyCategory: taxonomyInfo?.name || 'Unknown',
+        taxonomyPath: taxonomyPath.map(p => p.name).join(' > '),
         ourCategory: category,
         tags: listing.tags?.slice(0, 5) || [],
         url: listing.url,
-        fullTaxonomyInfo: taxonomyInfo ? {
+        fullTaxonomyInfo: taxonomyInfo && taxonomyInfo.id ? {
           id: taxonomyInfo.id,
           name: taxonomyInfo.name,
           level: taxonomyInfo.level,
+          source: taxonomyInfo._source,
           full_path_taxonomy_ids: taxonomyInfo.full_path_taxonomy_ids
         } : null,
       });
@@ -208,6 +254,80 @@ function mapSellerTaxonomyToCategory(taxonomy: any, taxonomyPath: any[]): string
 
   // Default fallback - most jewelry shops have bracelets as primary
   return 'bracelets';
+}
+
+/**
+ * Map BuyerTaxonomy to our internal categories (fallback)
+ */
+function mapBuyerTaxonomyToCategory(taxonomy: any, taxonomyPath: any[]): string {
+  if (!taxonomy) return 'unknown';
+  
+  const allNames = [
+    taxonomy.name.toLowerCase(),
+    ...taxonomyPath.map(p => p.name.toLowerCase())
+  ];
+
+  console.log(`🛒 BuyerTaxonomy analysis for "${taxonomy.name}":`, allNames);
+
+  // Buyer taxonomy tends to be more general categories
+  if (allNames.some(name => 
+    name.includes('earring') || name.includes('ear')
+  )) {
+    return 'earrings';
+  }
+  
+  if (allNames.some(name => 
+    name.includes('necklace') || name.includes('pendant') || name.includes('chain')
+  )) {
+    return 'necklaces';
+  }
+  
+  if (allNames.some(name => 
+    name.includes('bracelet') || name.includes('bangle') || name.includes('wrist')
+  )) {
+    return 'bracelets';
+  }
+  
+  if (allNames.some(name => 
+    name.includes('ring') && !name.includes('earring')
+  )) {
+    return 'rings';
+  }
+
+  return 'bracelets';
+}
+
+/**
+ * Fallback: Map based on tags and title (our original method)
+ */
+function mapTagsToCategory(listing: any): string {
+  const tags = (listing.tags || []).map((t: string) => t.toLowerCase());
+  const materials = (listing.materials || []).map((m: string) => m.toLowerCase());
+  const title = listing.title.toLowerCase();
+  const allSearchTerms = [...tags, ...materials, title];
+  
+  console.log(`🏷️  Tag-based analysis for "${listing.title}":`, tags.slice(0, 5));
+  
+  if (allSearchTerms.some(term => 
+    term.includes('ring') && !term.includes('earring')
+  )) {
+    return 'rings';
+  } else if (allSearchTerms.some(term => 
+    term.includes('necklace') || term.includes('ketting') || term.includes('halsketting') || term.includes('chain')
+  )) {
+    return 'necklaces';
+  } else if (allSearchTerms.some(term => 
+    term.includes('earring') || term.includes('oorbel') || term.includes('oorbellen') || 
+    term.includes('ear') || term.includes('stud') || term.includes('hoop') || term.includes('drop')
+  )) {
+    return 'earrings';
+  } else if (allSearchTerms.some(term => 
+    term.includes('bracelet') || term.includes('armband') || term.includes('bangle') || term.includes('wrist')
+  )) {
+    return 'bracelets';
+  }
+  
+  return 'bracelets'; // default
 }
 
 /**
