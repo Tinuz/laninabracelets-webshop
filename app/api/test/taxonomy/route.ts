@@ -159,13 +159,16 @@ export async function GET() {
               category = mapBuyerTaxonomyToCategory(taxonomyInfo, taxonomyPath, taxonomyProperties);
               
             } else {
+              const buyerErrorText = await buyerTaxonomyResponse.text();
+              console.warn(`❌ BuyerTaxonomy also failed ${buyerTaxonomyResponse.status} for taxonomy_id ${listing.taxonomy_id}:`, buyerErrorText);
               console.warn(`❌ Both SellerTaxonomy and BuyerTaxonomy failed for taxonomy_id ${listing.taxonomy_id}`);
               taxonomySource = 'failed';
               // Will fall back to tag-based categorization
               category = mapTagsToCategory(listing);
             }
           } else {
-            console.warn(`SellerTaxonomy error ${sellerTaxonomyResponse.status} for taxonomy_id ${listing.taxonomy_id}`);
+            const errorText = await sellerTaxonomyResponse.text();
+            console.warn(`❌ SellerTaxonomy error ${sellerTaxonomyResponse.status} for taxonomy_id ${listing.taxonomy_id}:`, errorText);
             taxonomySource = 'failed';
             category = mapTagsToCategory(listing);
           }
@@ -201,11 +204,45 @@ export async function GET() {
       });
     }
 
+    // Test some known taxonomy IDs to verify API connectivity
+    const testTaxonomyIds = [1, 68, 69, 164, 165]; // Common jewelry categories
+    const taxonomyTests = [];
+
+    for (const testId of testTaxonomyIds) {
+      try {
+        const testResponse = await fetch(
+          `${ETSY_API_BASE}/application/seller-taxonomy/nodes/${testId}`,
+          { headers }
+        );
+        
+        taxonomyTests.push({
+          id: testId,
+          sellerTaxonomy: testResponse.ok ? 'found' : testResponse.status,
+        });
+
+        if (testResponse.ok) {
+          const testData = await testResponse.json();
+          console.log(`✅ Test taxonomy ID ${testId} found:`, testData.name);
+        }
+      } catch (error) {
+        taxonomyTests.push({
+          id: testId,
+          sellerTaxonomy: 'error',
+        });
+      }
+    }
+
     return NextResponse.json({
       success: true,
       totalListings: listingData.count,
       analyzedListings: results.length,
       results: results,
+      taxonomyTests: taxonomyTests,
+      debug: {
+        problematicTaxonomyId: 1208,
+        message: "ID 1208 seems to not exist in either SellerTaxonomy or BuyerTaxonomy",
+        fallbackWorking: results.every(r => r.ourCategory !== 'unknown')
+      },
       timestamp: new Date().toISOString(),
       recommendations: generateRecommendations(results),
     });
