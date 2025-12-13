@@ -111,7 +111,7 @@ export async function GET() {
               const propertiesData = await propertiesResponse.json();
               taxonomyProperties = propertiesData.results || [];
               console.log(`🏷️  SellerTaxonomy properties for "${listing.title}":`, 
-                taxonomyProperties.map(p => p.name).slice(0, 5)
+                taxonomyProperties.map((p: any) => p.name).slice(0, 5)
               );
             }
 
