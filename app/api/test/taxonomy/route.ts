@@ -39,7 +39,7 @@ export async function GET() {
     console.log('📦 Fetching sample listing from shop...');
     
     const listingResponse = await fetch(
-      `${ETSY_API_BASE}/application/shops/${ETSY_SHOP_ID}/listings/active?limit=3`,
+      `${ETSY_API_BASE}/application/shops/${ETSY_SHOP_ID}/listings/active?limit=10`,
       { headers }
     );
 
@@ -99,7 +99,22 @@ export async function GET() {
               taxonomyPath = pathData.results || [];
             }
 
-            category = mapSellerTaxonomyToCategory(taxonomyInfo, taxonomyPath);
+            // Get taxonomy properties for additional categorization info
+            const propertiesResponse = await fetch(
+              `${ETSY_API_BASE}/application/seller-taxonomy/nodes/${listing.taxonomy_id}/properties`,
+              { headers }
+            );
+
+            let taxonomyProperties = [];
+            if (propertiesResponse.ok) {
+              const propertiesData = await propertiesResponse.json();
+              taxonomyProperties = propertiesData.results || [];
+              console.log(`🏷️  SellerTaxonomy properties for "${listing.title}":`, 
+                taxonomyProperties.map(p => p.name).slice(0, 5)
+              );
+            }
+
+            category = mapSellerTaxonomyToCategory(taxonomyInfo, taxonomyPath, taxonomyProperties);
             
           } else if (sellerTaxonomyResponse.status === 404) {
             // Fallback to BuyerTaxonomy if SellerTaxonomy doesn't exist
@@ -126,7 +141,22 @@ export async function GET() {
                 taxonomyPath = pathData.results || [];
               }
 
-              category = mapBuyerTaxonomyToCategory(taxonomyInfo, taxonomyPath);
+              // Get BuyerTaxonomy properties as fallback
+              const buyerPropertiesResponse = await fetch(
+                `${ETSY_API_BASE}/application/buyer-taxonomy/nodes/${listing.taxonomy_id}/properties`,
+                { headers }
+              );
+
+              let taxonomyProperties = [];
+              if (buyerPropertiesResponse.ok) {
+                const propertiesData = await buyerPropertiesResponse.json();
+                taxonomyProperties = propertiesData.results || [];
+                console.log(`🏷️  BuyerTaxonomy properties for "${listing.title}":`, 
+                  taxonomyProperties.map(p => p.name).slice(0, 5)
+                );
+              }
+
+              category = mapBuyerTaxonomyToCategory(taxonomyInfo, taxonomyPath, taxonomyProperties);
               
             } else {
               console.warn(`❌ Both SellerTaxonomy and BuyerTaxonomy failed for taxonomy_id ${listing.taxonomy_id}`);
@@ -156,6 +186,7 @@ export async function GET() {
         taxonomySource: taxonomyInfo?._source || 'none',
         etsyCategory: taxonomyInfo?.name || 'Unknown',
         taxonomyPath: taxonomyPath.map(p => p.name).join(' > '),
+        taxonomyProperties: taxonomyProperties?.map(p => p.name).slice(0, 5) || [],
         ourCategory: category,
         tags: listing.tags?.slice(0, 5) || [],
         url: listing.url,
@@ -164,7 +195,8 @@ export async function GET() {
           name: taxonomyInfo.name,
           level: taxonomyInfo.level,
           source: taxonomyInfo._source,
-          full_path_taxonomy_ids: taxonomyInfo.full_path_taxonomy_ids
+          full_path_taxonomy_ids: taxonomyInfo.full_path_taxonomy_ids,
+          properties_count: taxonomyProperties?.length || 0
         } : null,
       });
     }
@@ -190,8 +222,9 @@ export async function GET() {
 
 /**
  * Map Etsy SellerTaxonomy to our internal categories
+ * Uses taxonomy properties from getPropertiesByTaxonomyId for enhanced categorization
  */
-function mapSellerTaxonomyToCategory(taxonomy: any, taxonomyPath: any[]): string {
+function mapSellerTaxonomyToCategory(taxonomy: any, taxonomyPath: any[], properties: any[] = []): string {
   if (!taxonomy) return 'unknown';
   
   // Get all names from the taxonomy path (parent categories)
@@ -200,41 +233,54 @@ function mapSellerTaxonomyToCategory(taxonomy: any, taxonomyPath: any[]): string
     ...taxonomyPath.map(p => p.name.toLowerCase())
   ];
 
-  console.log(`🎯 SellerTaxonomy analysis for "${taxonomy.name}":`, allNames);
+  // Include property names for more accurate categorization
+  const propertyNames = properties.map(p => p.name.toLowerCase());
+  const allTerms = [...allNames, ...propertyNames];
 
-  // Enhanced category mapping based on SellerTaxonomy structure
-  // SellerTaxonomy often has more specific seller-focused categories
+  console.log(`🎯 SellerTaxonomy analysis for "${taxonomy.name}":`, {
+    taxonomy: allNames,
+    properties: propertyNames.slice(0, 3),
+    totalTerms: allTerms.length
+  });
+
+  // Enhanced category mapping using taxonomy + properties
+  // Properties from getPropertiesByTaxonomyId provide additional context
   
-  // Earrings - extensive matching including seller terminology
-  if (allNames.some(name => 
-    name.includes('earring') || name.includes('ear') || name.includes('stud') || 
-    name.includes('hoop') || name.includes('drop') || name.includes('dangle') ||
-    name.includes('chandelier') || name.includes('climber') || name.includes('huggie')
+  // Earrings - check both taxonomy and properties
+  if (allTerms.some(term => 
+    term.includes('earring') || term.includes('ear') || term.includes('stud') || 
+    term.includes('hoop') || term.includes('drop') || term.includes('dangle') ||
+    term.includes('chandelier') || term.includes('climber') || term.includes('huggie') ||
+    term.includes('post') || term.includes('wire') || term.includes('hook')
   )) {
     return 'earrings';
   }
   
-  // Necklaces - seller taxonomy often separates these clearly
-  if (allNames.some(name => 
-    name.includes('necklace') || name.includes('pendant') || name.includes('chain') || 
-    name.includes('choker') || name.includes('collar') || name.includes('lariat') ||
-    name.includes('y necklace') || name.includes('statement necklace')
+  // Necklaces - enhanced with property-based detection
+  if (allTerms.some(term => 
+    term.includes('necklace') || term.includes('pendant') || term.includes('chain') || 
+    term.includes('choker') || term.includes('collar') || term.includes('lariat') ||
+    term.includes('y necklace') || term.includes('statement necklace') ||
+    term.includes('length') || term.includes('neck') || term.includes('charm')
   )) {
     return 'necklaces';
   }
   
-  // Bracelets - including seller-specific terms
-  if (allNames.some(name => 
-    name.includes('bracelet') || name.includes('bangle') || name.includes('wrist') || 
-    name.includes('anklet') || name.includes('charm bracelet') || name.includes('cuff') ||
-    name.includes('tennis bracelet') || name.includes('wrap bracelet')
+  // Bracelets - enhanced with wrist/arm related properties
+  if (allTerms.some(term => 
+    term.includes('bracelet') || term.includes('bangle') || term.includes('wrist') || 
+    term.includes('anklet') || term.includes('charm bracelet') || term.includes('cuff') ||
+    term.includes('tennis bracelet') || term.includes('wrap bracelet') ||
+    term.includes('circumference') || term.includes('diameter') || term.includes('size')
   )) {
     return 'bracelets';
   }
   
-  // Rings - excluding earrings but including ring-specific terms
-  if (allNames.some(name => 
-    name.includes('ring') && !name.includes('earring') && !name.includes('spring')
+  // Rings - enhanced with ring-specific properties
+  if (allTerms.some(term => 
+    (term.includes('ring') && !term.includes('earring') && !term.includes('spring')) ||
+    term.includes('band') || term.includes('finger') || term.includes('engagement') ||
+    term.includes('wedding') || term.includes('signet')
   )) {
     return 'rings';
   }
@@ -259,7 +305,7 @@ function mapSellerTaxonomyToCategory(taxonomy: any, taxonomyPath: any[]): string
 /**
  * Map BuyerTaxonomy to our internal categories (fallback)
  */
-function mapBuyerTaxonomyToCategory(taxonomy: any, taxonomyPath: any[]): string {
+function mapBuyerTaxonomyToCategory(taxonomy: any, taxonomyPath: any[], properties: any[] = []): string {
   if (!taxonomy) return 'unknown';
   
   const allNames = [
