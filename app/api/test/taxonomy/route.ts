@@ -205,7 +205,7 @@ export async function GET() {
     }
 
     // Test some known taxonomy IDs to verify API connectivity
-    const testTaxonomyIds = [1, 68, 69, 164, 165]; // Common jewelry categories
+    const testTaxonomyIds = [1, 68, 69, 164, 165, 1208, 1429]; // Common jewelry categories + user suggestions
     const taxonomyTests = [];
 
     for (const testId of testTaxonomyIds) {
@@ -215,14 +215,55 @@ export async function GET() {
           { headers }
         );
         
-        taxonomyTests.push({
-          id: testId,
-          sellerTaxonomy: testResponse.ok ? 'found' : testResponse.status,
-        });
-
         if (testResponse.ok) {
           const testData = await testResponse.json();
           console.log(`✅ Test taxonomy ID ${testId} found:`, testData.name);
+          
+          // If this is ID 1429, also test BuyerTaxonomy and get properties
+          if (testId === 1429) {
+            try {
+              const buyerTest = await fetch(
+                `${ETSY_API_BASE}/application/buyer-taxonomy/nodes/${testId}`,
+                { headers }
+              );
+              const propertiesTest = await fetch(
+                `${ETSY_API_BASE}/application/seller-taxonomy/nodes/${testId}/properties`,
+                { headers }
+              );
+              
+              taxonomyTests.push({
+                id: testId,
+                sellerTaxonomy: 'found',
+                buyerTaxonomy: buyerTest.ok ? 'found' : buyerTest.status,
+                properties: propertiesTest.ok ? 'found' : propertiesTest.status,
+                name: testData.name,
+                level: testData.level,
+                fullData: testData
+              });
+
+              if (propertiesTest.ok) {
+                const propData = await propertiesTest.json();
+                console.log(`🏷️  ID 1429 properties:`, propData.results?.map((p: any) => p.name).slice(0, 5));
+              }
+            } catch (error) {
+              taxonomyTests.push({
+                id: testId,
+                sellerTaxonomy: 'found',
+                error: 'Failed to test additional APIs'
+              });
+            }
+          } else {
+            taxonomyTests.push({
+              id: testId,
+              sellerTaxonomy: 'found',
+              name: testData.name
+            });
+          }
+        } else {
+          taxonomyTests.push({
+            id: testId,
+            sellerTaxonomy: testResponse.status,
+          });
         }
       } catch (error) {
         taxonomyTests.push({
