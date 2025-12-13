@@ -152,7 +152,7 @@ export async function GET() {
                 const propertiesData = await buyerPropertiesResponse.json();
                 taxonomyProperties = propertiesData.results || [];
                 console.log(`🏷️  BuyerTaxonomy properties for "${listing.title}":`, 
-                  taxonomyProperties.map(p => p.name).slice(0, 5)
+                  taxonomyProperties.map((p: any) => p.name).slice(0, 5)
                 );
               }
 
@@ -186,7 +186,7 @@ export async function GET() {
         taxonomySource: taxonomyInfo?._source || 'none',
         etsyCategory: taxonomyInfo?.name || 'Unknown',
         taxonomyPath: taxonomyPath.map(p => p.name).join(' > '),
-        taxonomyProperties: taxonomyProperties?.map(p => p.name).slice(0, 5) || [],
+        taxonomyProperties: (taxonomyProperties || []).map((p: any) => p.name).slice(0, 5),
         ourCategory: category,
         tags: listing.tags?.slice(0, 5) || [],
         url: listing.url,
@@ -196,7 +196,7 @@ export async function GET() {
           level: taxonomyInfo.level,
           source: taxonomyInfo._source,
           full_path_taxonomy_ids: taxonomyInfo.full_path_taxonomy_ids,
-          properties_count: taxonomyProperties?.length || 0
+          properties_count: (taxonomyProperties || []).length
         } : null,
       });
     }
@@ -234,7 +234,7 @@ function mapSellerTaxonomyToCategory(taxonomy: any, taxonomyPath: any[], propert
   ];
 
   // Include property names for more accurate categorization
-  const propertyNames = properties.map(p => p.name.toLowerCase());
+  const propertyNames = properties.map((p: any) => p.name.toLowerCase());
   const allTerms = [...allNames, ...propertyNames];
 
   console.log(`🎯 SellerTaxonomy analysis for "${taxonomy.name}":`, {
