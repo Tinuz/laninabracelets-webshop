@@ -63,8 +63,7 @@ export function ProductDetail({ product, relatedProducts = [] }: ProductDetailPr
           {/* Image Gallery */}
           <div className="space-y-4">
             {/* Main Image */}
-            <div className="bg-white p-4 rounded-3xl shadow-xl shadow-purple-900/5 aspect-[4/5] w-full overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-tr from-purple-100/50 to-pink-100/50 rounded-2xl pointer-events-none" />
+            <div className="bg-white p-4 rounded-3xl shadow-xl shadow-stone-900/5 aspect-[4/5] w-full overflow-hidden relative">
               <motion.img 
                 key={selectedImageIndex}
                 initial={{ opacity: 0, scale: 0.95 }}
