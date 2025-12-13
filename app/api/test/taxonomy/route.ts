@@ -67,9 +67,10 @@ export async function GET() {
     for (const listing of listingData.results.slice(0, 3)) {
       console.log(`🔍 Processing listing: ${listing.title}`);
       
-      let taxonomyInfo = null;
-      let taxonomyPath = [];
-      let category = 'unknown';
+        let taxonomyInfo = null;
+        let taxonomyPath = [];
+        let taxonomyProperties = [];
+        let category = 'unknown';
 
         if (listing.taxonomy_id) {
         let taxonomySource = 'none';
@@ -147,7 +148,6 @@ export async function GET() {
                 { headers }
               );
 
-              let taxonomyProperties = [];
               if (buyerPropertiesResponse.ok) {
                 const propertiesData = await buyerPropertiesResponse.json();
                 taxonomyProperties = propertiesData.results || [];
