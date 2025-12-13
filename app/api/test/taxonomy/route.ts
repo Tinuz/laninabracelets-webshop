@@ -204,16 +204,58 @@ export async function GET() {
       });
     }
 
-    // Test some known taxonomy IDs to verify API connectivity
-    const testTaxonomyIds = [1, 68, 69, 164, 165, 1208, 1429]; // Common jewelry categories + user suggestions
+    // Test API endpoints with detailed debugging
+    const testTaxonomyIds = [1, 68, 69, 164, 165, 1208, 1429];
     const taxonomyTests = [];
+    
+    console.log('🔍 Testing taxonomy API endpoints...');
+    console.log('Base URL:', ETSY_API_BASE);
+    console.log('Headers:', JSON.stringify(headers, null, 2));
 
     for (const testId of testTaxonomyIds) {
+      const sellerUrl = `${ETSY_API_BASE}/application/seller-taxonomy/nodes/${testId}`;
+      const buyerUrl = `${ETSY_API_BASE}/application/buyer-taxonomy/nodes/${testId}`;
+      
+      console.log(`\n🧪 Testing ID ${testId}:`);
+      console.log(`Seller URL: ${sellerUrl}`);
+      console.log(`Buyer URL: ${buyerUrl}`);
+      
       try {
-        const testResponse = await fetch(
-          `${ETSY_API_BASE}/application/seller-taxonomy/nodes/${testId}`,
-          { headers }
-        );
+        // Test SellerTaxonomy
+        const sellerResponse = await fetch(sellerUrl, { headers });
+        console.log(`Seller response: ${sellerResponse.status}`);
+        
+        // Test BuyerTaxonomy  
+        const buyerResponse = await fetch(buyerUrl, { headers });
+        console.log(`Buyer response: ${buyerResponse.status}`);
+        
+        let testResult: any = {
+          id: testId,
+          sellerTaxonomy: sellerResponse.status,
+          buyerTaxonomy: buyerResponse.status,
+        };
+        
+        if (sellerResponse.ok) {
+          const sellerData = await sellerResponse.json();
+          testResult.sellerName = sellerData.name;
+          console.log(`✅ Seller found: ${sellerData.name}`);
+        } else {
+          const sellerError = await sellerResponse.text();
+          testResult.sellerError = sellerError.substring(0, 100);
+          console.log(`❌ Seller error: ${sellerError.substring(0, 100)}`);
+        }
+        
+        if (buyerResponse.ok) {
+          const buyerData = await buyerResponse.json();
+          testResult.buyerName = buyerData.name;
+          console.log(`✅ Buyer found: ${buyerData.name}`);
+        } else {
+          const buyerError = await buyerResponse.text();
+          testResult.buyerError = buyerError.substring(0, 100);
+          console.log(`❌ Buyer error: ${buyerError.substring(0, 100)}`);
+        }
+
+        taxonomyTests.push(testResult);
         
         if (testResponse.ok) {
           const testData = await testResponse.json();
