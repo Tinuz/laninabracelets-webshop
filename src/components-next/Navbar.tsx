@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ExternalLink } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 
@@ -74,7 +74,19 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center">
-          {/* Cart removed - all purchases via Etsy */}
+          {/* Etsy Shop Link */}
+          <a
+            href="https://www.etsy.com/shop/LaNinaBracelets"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 px-4 py-2 text-stone-900 hover:text-stone-600 transition-colors"
+            aria-label="Bezoek onze Etsy Shop"
+          >
+            <ExternalLink size={20} className="group-hover:scale-110 transition-transform" />
+            <span className="hidden sm:block text-xs font-bold tracking-widest uppercase font-sans">
+              Shop
+            </span>
+          </a>
         </div>
       </div>
       
@@ -146,14 +158,24 @@ export function Navbar() {
                 </div>
                 
                 {/* Footer */}
-                <div className="p-6 border-t border-stone-200">
+                <div className="p-6 border-t border-stone-200 space-y-4">
                   <Link
                     href="/collection"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="w-full flex items-center justify-center gap-3 py-4 bg-stone-900 text-white font-bold uppercase tracking-widest text-sm transition-colors hover:bg-stone-700"
                   >
-                    Shop Nu
+                    Bekijk Collectie
                   </Link>
+                  <a
+                    href="https://www.etsy.com/shop/LaNinaBracelets"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-full flex items-center justify-center gap-3 py-3 border-2 border-stone-900 text-stone-900 font-bold uppercase tracking-widest text-sm transition-colors hover:bg-stone-900 hover:text-white"
+                  >
+                    <ExternalLink size={16} />
+                    Etsy Shop
+                  </a>
                 </div>
               </div>
             </motion.div>
