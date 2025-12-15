@@ -92,14 +92,14 @@ export function About() {
                 Ambachtelijk Vakmanschap
               </h2>
             <p className="text-lg font-light text-stone-600 leading-relaxed">
-              Nina werkt vanuit haar atelier in Amsterdam, waar elk sieraad met de hand wordt gemaakt. 
+              Nina werkt vanuit haar atelier nabij Amsterdam, waar elk sieraad met de hand wordt gemaakt. 
               Elke curve, sluiting en kraal wordt zorgvuldig gekozen en geplaatst. Door gebruik te maken van 
               hoogwaardige maar betaalbare materialen, houdt Nina haar sieraden toegankelijk zonder in te boeten op kwaliteit.
             </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-stone-500 mt-1 flex-shrink-0" />
-                  <span className="text-stone-600 font-light">Handgemaakt door Nina in Amsterdam</span>
+                  <span className="text-stone-600 font-light">Handgemaakt door Nina</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-stone-500 mt-1 flex-shrink-0" />
@@ -192,7 +192,7 @@ export function About() {
               {
                 icon: Heart,
                 title: 'Handgemaakt',
-                description: 'Nina maakt elk stuk met de hand in haar Amsterdamse atelier, met oog voor detail en persoonlijke touch.',
+                description: 'Nina maakt elk stuk met de hand in haar atelier nabij Amsterdam, met oog voor detail en persoonlijke touch.',
               },
               {
                 icon: Award,

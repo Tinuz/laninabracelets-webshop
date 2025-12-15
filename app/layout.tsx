@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     default: "La Nina Bracelets - Handgemaakte Sieraden | Betaalbare Armbanden, Kettingen & Oorbellen",
     template: "%s | La Nina Bracelets"
   },
-  description: "✨ Handgemaakte sieraden door Nina in Amsterdam. Betaalbare armbanden, kettingen & oorbellen. Gratis verzending vanaf €50. 30 dagen retour. ⭐ 4.9/5 sterren",
+  description: "✨ Handgemaakte sieraden door Nina nabij Amsterdam. Betaalbare armbanden, kettingen & oorbellen. Gratis verzending vanaf €50. 30 dagen retour. ⭐ 4.9/5 sterren",
   keywords: [
     "handgemaakte sieraden", 
     "betaalbare armbanden", 
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     locale: "nl_NL",
     url: "https://www.laninabracelets.com",
     title: "La Nina Bracelets - Handgemaakte Sieraden door Nina",
-    description: "Betaalbare, handgemaakte sieraden gemaakt met liefde in Amsterdam. Ontdek unieke armbanden, kettingen en oorbellen.",
+    description: "Betaalbare, handgemaakte sieraden gemaakt met liefde nabij Amsterdam. Ontdek unieke armbanden, kettingen en oorbellen.",
     siteName: "La Nina Bracelets",
     images: [
       {
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     site: "@laninabracelets",
     creator: "@laninabracelets",
     title: "La Nina Bracelets - Handgemaakte Sieraden",
-    description: "Betaalbare, handgemaakte sieraden gemaakt met liefde in Amsterdam door Nina",
+    description: "Betaalbare, handgemaakte sieraden gemaakt met liefde nabij Amsterdam door Nina",
     images: ["/og-image.jpg"]
   },
   robots: {
@@ -110,7 +110,7 @@ export default function RootLayout({
           name="La Nina Bracelets"
           url="https://www.laninabracelets.com"
           logo="https://www.laninabracelets.com/images/logo_trns.png"
-          description="Handgemaakte sieraden door Nina in Amsterdam. Betaalbare armbanden, kettingen en oorbellen gemaakt met liefde."
+          description="Handgemaakte sieraden door Nina nabij Amsterdam. Betaalbare armbanden, kettingen en oorbellen gemaakt met liefde."
           address={{
             streetAddress: "Amsterdam",
             addressLocality: "Amsterdam", 
@@ -118,9 +118,9 @@ export default function RootLayout({
             addressCountry: "NL"
           }}
           contactPoint={{
-            telephone: "+31-20-1234567",
+            telephone: "-",
             contactType: "customer service",
-            email: "info@laninabracelets.com"
+            email: "laninabracelets@gmail.com"
           }}
           socialMedia={[
             "https://instagram.com/laninabracelets",

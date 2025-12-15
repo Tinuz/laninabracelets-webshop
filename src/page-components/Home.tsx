@@ -198,7 +198,7 @@ export function Home({ products = [] }: HomeProps) {
               <p>
                 Haar inspiratie komt uit het alledaagse leven - de manier waarop licht door een raam valt, 
                 de kleuren van bloemen op de markt, of de textuur van een oude muur. Nina werkt vanuit haar 
-                atelier in Amsterdam, waar elk sieraad met de hand wordt gemaakt met persoonlijke zorg en aandacht.
+                atelier nabij Amsterdam, waar elk sieraad met de hand wordt gemaakt met persoonlijke zorg en aandacht.
               </p>
             </motion.div>
             <motion.div

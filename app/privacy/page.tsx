@@ -19,7 +19,7 @@ export default function PrivacyPage() {
           <section className="mb-10">
             <h2 className="font-serif text-2xl text-stone-900 mb-4">1. Wie zijn wij?</h2>
             <p className="text-stone-600 font-light leading-relaxed">
-              La Nina Bracelets is een webshop voor handgemaakte sieraden, gevestigd in Amsterdam. 
+              La Nina Bracelets is een webshop voor handgemaakte sieraden, gevestigd nabij Amsterdam. 
               Wij verkopen onze producten via Etsy. Deze website dient als showcase voor onze collectie.
             </p>
           </section>

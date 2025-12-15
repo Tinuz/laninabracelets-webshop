@@ -39,7 +39,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   
   return {
     title: "Sieraden Collectie - Handgemaakte Armbanden, Kettingen & Oorbellen",
-    description: "🔗 Volledige collectie handgemaakte sieraden door Nina in Amsterdam. Betaalbare armbanden, kettingen en oorbellen. Uniek design, kwaliteit materialen.",
+    description: "🔗 Volledige collectie handgemaakte sieraden door Nina nabij Amsterdam. Betaalbare armbanden, kettingen en oorbellen. Uniek design, kwaliteit materialen.",
     keywords: [
       "sieraden collectie",
       "handgemaakte armbanden",

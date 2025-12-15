@@ -19,7 +19,7 @@ export default function TermsPage() {
           <section className="mb-10">
             <h2 className="font-serif text-2xl text-stone-900 mb-4">1. Algemeen</h2>
             <p className="text-stone-600 font-light leading-relaxed">
-              Deze website is eigendom van La Nina Bracelets, gevestigd in Amsterdam, Nederland. 
+              Deze website is eigendom van La Nina Bracelets, gevestigd nabij Amsterdam, Nederland. 
               Door deze website te bezoeken en te gebruiken, ga je akkoord met deze algemene voorwaarden.
             </p>
           </section>
@@ -109,7 +109,7 @@ export default function TermsPage() {
             <h2 className="font-serif text-2xl text-stone-900 mb-4">9. Toepasselijk Recht</h2>
             <p className="text-stone-600 font-light leading-relaxed">
               Op deze voorwaarden is Nederlands recht van toepassing. Eventuele geschillen worden 
-              voorgelegd aan de bevoegde rechter in Amsterdam.
+              voorgelegd aan de bevoegde rechter in Haarlem.
             </p>
           </section>
         </div>
