@@ -26,10 +26,17 @@ export function Collection({ products = [] }: CollectionProps) {
   // Initialize filters from URL parameters
   useEffect(() => {
     const filterParam = searchParams.get('filter');
+    const categoryParam = searchParams.get('category');
+    
     if (filterParam === 'new') {
       setShowNewOnly(true);
     } else if (filterParam === 'bestsellers') {
       setShowBestsellersOnly(true);
+    }
+    
+    // Set category from URL parameter
+    if (categoryParam && ['rings', 'necklaces', 'earrings', 'bracelets'].includes(categoryParam)) {
+      setCategory(categoryParam as Category);
     }
   }, [searchParams]);
 

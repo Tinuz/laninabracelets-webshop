@@ -96,7 +96,7 @@ export function Home({ products = [] }: HomeProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Link href="/collection" className="group relative aspect-[16/9] overflow-hidden rounded-2xl shadow-xl">
+            <Link href="/collection?category=bracelets" className="group relative aspect-[16/9] overflow-hidden rounded-2xl shadow-xl">
               <img 
                 src="/images/bracelets.jpg" 
                     alt="Handgemaakte armbanden collectie - La Nina Bracelets"
@@ -108,7 +108,7 @@ export function Home({ products = [] }: HomeProps) {
               </div>
             </Link>
             <div className="grid grid-cols-2 gap-6">
-              <Link href="/collection" className="group relative aspect-square overflow-hidden rounded-2xl shadow-xl">
+              <Link href="/collection?category=earrings" className="group relative aspect-square overflow-hidden rounded-2xl shadow-xl">
                 <img 
                   src="/images/earring_shop.jpg" 
                       alt="Handgemaakte oorbellen - unieke ontwerpen"
@@ -119,7 +119,7 @@ export function Home({ products = [] }: HomeProps) {
                   <span className="text-white font-serif text-4xl tracking-wide">Oorbellen</span>
                 </div>
               </Link>
-              <Link href="/collection" className="group relative aspect-square overflow-hidden rounded-2xl shadow-xl">
+              <Link href="/collection?category=necklaces" className="group relative aspect-square overflow-hidden rounded-2xl shadow-xl">
                 <img 
                     src="/images/necklace_shop.jpg"
                       alt="Handgemaakte kettingen - goud en zilver"
