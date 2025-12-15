@@ -17,44 +17,78 @@ interface CollectionProps {
 
 export function Collection({ products = [] }: CollectionProps) {
   const searchParams = useSearchParams();
-  const [category, setCategory] = useState<Category>('all');
+  
+  // Initialize states from URL parameters immediately
+  const getInitialCategory = (): Category => {
+    const categoryParam = searchParams.get('category');
+    if (categoryParam && ['rings', 'necklaces', 'earrings', 'bracelets'].includes(categoryParam)) {
+      return categoryParam as Category;
+    }
+    return 'all';
+  };
+  
+  const getInitialFilters = () => {
+    const filterParam = searchParams.get('filter');
+    return {
+      showNewOnly: filterParam === 'new',
+      showBestsellersOnly: filterParam === 'bestsellers'
+    };
+  };
+
+  const [category, setCategory] = useState<Category>(getInitialCategory());
   const [sort, setSort] = useState<SortOption>('newest');
-  const [showNewOnly, setShowNewOnly] = useState(false);
-  const [showBestsellersOnly, setShowBestsellersOnly] = useState(false);
+  const [showNewOnly, setShowNewOnly] = useState(getInitialFilters().showNewOnly);
+  const [showBestsellersOnly, setShowBestsellersOnly] = useState(getInitialFilters().showBestsellersOnly);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Initialize filters from URL parameters
+  // Update filters when URL parameters change
   useEffect(() => {
     const filterParam = searchParams.get('filter');
     const categoryParam = searchParams.get('category');
     
-    if (filterParam === 'new') {
-      setShowNewOnly(true);
-    } else if (filterParam === 'bestsellers') {
-      setShowBestsellersOnly(true);
-    }
+    // Update filters
+    setShowNewOnly(filterParam === 'new');
+    setShowBestsellersOnly(filterParam === 'bestsellers');
     
-    // Set category from URL parameter
+    // Update category
     if (categoryParam && ['rings', 'necklaces', 'earrings', 'bracelets'].includes(categoryParam)) {
       setCategory(categoryParam as Category);
+    } else {
+      setCategory('all');
     }
   }, [searchParams]);
 
   const filteredProducts = useMemo(() => {
     let result = [...products];
     
+    console.log(`🔍 Collection Filter Debug:`, {
+      totalProducts: products.length,
+      selectedCategory: category,
+      showNewOnly,
+      showBestsellersOnly,
+      urlSearchParams: searchParams.toString()
+    });
+    
     // Filter by "new" items if showNewOnly is true
     if (showNewOnly) {
       result = result.filter(p => p.isNew === true);
+      console.log(`📋 After "new" filter: ${result.length} products`);
     }
     
     // Filter by "bestsellers" if showBestsellersOnly is true
     if (showBestsellersOnly) {
       result = result.filter(p => p.isBestseller === true);
+      console.log(`📋 After "bestsellers" filter: ${result.length} products`);
     }
     
     if (category !== 'all') {
+      const beforeFilter = result.length;
       result = result.filter(p => p.category === category);
+      console.log(`📋 Category filter "${category}": ${beforeFilter} → ${result.length} products`);
+      
+      if (result.length > 0) {
+        console.log(`📦 Filtered products:`, result.slice(0, 3).map(p => ({ name: p.name, category: p.category })));
+      }
     }
 
     if (sort === 'name-asc') {
@@ -65,8 +99,9 @@ export function Collection({ products = [] }: CollectionProps) {
       result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
     }
 
+    console.log(`✅ Final filtered result: ${result.length} products`);
     return result;
-  }, [products, category, sort, showNewOnly, showBestsellersOnly]);
+  }, [products, category, sort, showNewOnly, showBestsellersOnly, searchParams]);
 
   const categories: { label: string; value: Category }[] = [
     { label: 'Alle Sieraden', value: 'all' },
